@@ -12,6 +12,7 @@
 import { COLORS, CHLOROPHYLL_ABSORPTION, wavelengthToRGB } from '../tokens.js';
 import { mountStage } from '../engine.js';
 import { roundedLeafPath } from '../primitives.js';
+import { hexToRgb, withAlpha } from '../util.js';
 
 /* Linear-interp the 10-nm sample table. */
 function absorptionAt(nm) {
@@ -41,34 +42,35 @@ function readoutFor(nm, absorbed) {
 }
 
 export function init(sectionEl) {
-  try {
-    const canvas  = sectionEl.querySelector('#s6-canvas');
-    const slider  = sectionEl.querySelector('#s6-wavelength');
-    const wlLabel = sectionEl.querySelector('#s6-wl-val');
-    const readout = sectionEl.querySelector('#s6-readout');
-    if (!canvas || !slider) return;
+  try { mount(sectionEl); }
+  catch (err) { console.error('[s6-green] init failed:', err); }
+  // The panel HTML still shows title/hint even when the canvas is dead.
+}
 
-    const state = { nm: Number(slider.value) || 550 };
+function mount(sectionEl) {
+  const canvas  = sectionEl.querySelector('#s6-canvas');
+  const slider  = sectionEl.querySelector('#s6-wavelength');
+  const wlLabel = sectionEl.querySelector('#s6-wl-val');
+  const readout = sectionEl.querySelector('#s6-readout');
+  if (!canvas || !slider) return;
 
-    const syncDom = () => {
-      const absorbed = absorptionAt(state.nm);
-      if (wlLabel) wlLabel.textContent = `${state.nm} nm`;
-      if (readout) readout.textContent = readoutFor(state.nm, absorbed);
-    };
+  const state = { nm: Number(slider.value) || 550 };
+
+  const syncDom = () => {
+    const absorbed = absorptionAt(state.nm);
+    if (wlLabel) wlLabel.textContent = `${state.nm} nm`;
+    if (readout) readout.textContent = readoutFor(state.nm, absorbed);
+  };
+  syncDom();
+
+  slider.addEventListener('input', () => {
+    state.nm = Number(slider.value);
     syncDom();
+  });
 
-    slider.addEventListener('input', () => {
-      state.nm = Number(slider.value);
-      syncDom();
-    });
-
-    mountStage(canvas, (ctx, dt, t, W, H) => render(ctx, W, H, state), {
-      background: COLORS.bgDeep,
-    });
-  } catch (err) {
-    console.error('[s6-green] init failed:', err);
-    // The panel HTML still shows title/hint even when the canvas is dead.
-  }
+  mountStage(canvas, (ctx, dt, t, W, H) => render(ctx, W, H, state), {
+    background: COLORS.bgDeep,
+  });
 }
 
 /* -------------------------------------------------------------------------
@@ -215,8 +217,8 @@ function drawSpectrumPanel(ctx, box, state) {
   ctx.lineTo(chart.x + chart.w, chart.y + chart.h);
   ctx.closePath();
   const fill = ctx.createLinearGradient(0, chart.y, 0, chart.y + chart.h);
-  fill.addColorStop(0, 'rgba(74, 222, 128, 0.55)');
-  fill.addColorStop(1, 'rgba(74, 222, 128, 0.05)');
+  fill.addColorStop(0, withAlpha(COLORS.chloro, 0.55));
+  fill.addColorStop(1, withAlpha(COLORS.chloro, 0.05));
   ctx.fillStyle = fill;
   ctx.fill();
 
@@ -276,7 +278,7 @@ function drawSpectrumPanel(ctx, box, state) {
   ctx.arc(mx, my, 5.5, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
-  ctx.strokeStyle = '#ffffff';
+  ctx.strokeStyle = COLORS.specular;
   ctx.lineWidth = 1.2;
   ctx.stroke();
 
@@ -304,12 +306,10 @@ function drawSpectrumPanel(ctx, box, state) {
   ctx.restore();
 }
 
-/* -------- tiny color utilities (kept local) ---------------------------- */
+/* -------- tiny color utility (kept local) ------------------------------ */
 
-function hexToRgb(hex) {
-  const h = hex.replace('#', '');
-  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
-}
+/* Parse "rgb(r, g, b)" back to [r, g, b] ints. Local because it's only used
+   to unpack wavelengthToRGB()'s string output; not a generic hex utility. */
 function parseRgb(str) {
   const m = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/.exec(str);
   return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [255, 255, 255];

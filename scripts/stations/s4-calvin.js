@@ -18,6 +18,7 @@ import { COLORS } from '../tokens.js';
 import { mountStage } from '../engine.js';
 import { ParticleSystem, catmullRom } from '../particles.js';
 import { drawStroma, drawStoma, drawMolecule, blobPath } from '../primitives.js';
+import { withAlpha, prefersReducedMotion } from '../util.js';
 
 /* --- world layout (origin = wheel center). ---------------------------------
    Idle: camera at origin. Riding: camera follows the atom. */
@@ -57,11 +58,11 @@ const PHASES = [
 const ENDING = 'Done. That atom is locked into glucose. Six turns of the wheel, one sugar. Rubisco does that on nearly every leaf on Earth, all day long.';
 
 export function init(sectionEl) {
-  try { boot(sectionEl); }
-  catch (err) { console.warn('s4-calvin init failed:', err); }
+  try { mount(sectionEl); }
+  catch (err) { console.error('[s4-calvin] init failed:', err); }
 }
 
-function boot(sectionEl) {
+function mount(sectionEl) {
   const canvas   = sectionEl.querySelector('#s4-canvas');
   const btnRide  = sectionEl.querySelector('#s4-ride');
   const btnReset = sectionEl.querySelector('#s4-reset');
@@ -69,7 +70,7 @@ function boot(sectionEl) {
   const speedVal = sectionEl.querySelector('#s4-speed-val');
   const readout  = sectionEl.querySelector('#s4-readout');
   if (!canvas) return;
-  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = prefersReducedMotion();
 
   const state = {
     riding: false, done: false,
@@ -117,7 +118,7 @@ function boot(sectionEl) {
   btnReset.addEventListener('click', resetRide);
 
   mountStage(canvas, (ctx, dt, t, W, H) => {
-    if (reducedMotion) { drawIdleWorld(ctx, W, H, state, particles, /*fadeOverlay*/ false); return; }
+    if (reducedMotion) { drawIdleWorld(ctx, W, H, state, particles); return; }
 
     // ---- update ----
     const rideDt = dt * (state.riding ? state.speed : 1);
@@ -131,10 +132,10 @@ function boot(sectionEl) {
     const camY = state.atomWorld.y * state.camBlend;
 
     // ---- draw: idle world (behind spotlight), then relit atom on top ----
-    drawIdleWorld(ctx, W, H, state, particles, /*fadeOverlay*/ false, camX, camY);
+    drawIdleWorld(ctx, W, H, state, particles, camX, camY);
     if (state.riding || state.done) {
       ctx.save();
-      ctx.fillStyle = 'rgba(4, 16, 11, 0.55)';
+      ctx.fillStyle = withAlpha(COLORS.bgDeep, 0.55);
       ctx.fillRect(0, 0, W, H);
       ctx.restore();
       ctx.save();
@@ -218,7 +219,7 @@ function maybeSpendCarriers(state, particles) {
 
 /* -------- world rendering (idle scene) -------------------------------------- */
 
-function drawIdleWorld(ctx, W, H, state, particles, _fade, camX = 0, camY = 0) {
+function drawIdleWorld(ctx, W, H, state, particles, camX = 0, camY = 0) {
   ctx.save();
   ctx.translate(W / 2 - camX, H / 2 - camY);
 
@@ -243,7 +244,7 @@ function drawIdleWorld(ctx, W, H, state, particles, _fade, camX = 0, camY = 0) {
 
 function drawLeafEdge(ctx) {
   ctx.save();
-  ctx.strokeStyle = 'rgba(74, 222, 128, 0.55)';
+  ctx.strokeStyle = withAlpha(COLORS.chloro, 0.55);
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(-360, -170);
@@ -299,7 +300,7 @@ function drawRubisco(ctx, state) {
   ctx.save();
   ctx.shadowColor = COLORS.rubisco;
   ctx.shadowBlur = active ? 24 : 10;
-  ctx.fillStyle = `rgba(94, 234, 212, ${pulse * 0.75})`;
+  ctx.fillStyle = withAlpha(COLORS.rubisco, pulse * 0.75);
   ctx.fill(path);
   ctx.shadowBlur = 0;
   ctx.strokeStyle = COLORS.rubisco;
@@ -345,7 +346,7 @@ function drawTrail(ctx, state) {
   for (const c of state.trail) {
     const a = Math.max(0, 1 - c.age / 6) * 0.7;
     if (a <= 0.01) continue;
-    ctx.fillStyle = `rgba(255, 224, 102, ${a})`;
+    ctx.fillStyle = withAlpha(COLORS.photon, a);
     ctx.beginPath(); ctx.arc(c.x, c.y, 2.4, 0, Math.PI * 2); ctx.fill();
   }
   ctx.restore();
@@ -364,7 +365,7 @@ function drawPips(ctx, W, H, state) {
     const filled = i < state.turnsShown;
     ctx.beginPath();
     ctx.arc(x0 + i * gap, y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = filled ? COLORS.sugar : 'rgba(216, 161, 94, 0.18)';
+    ctx.fillStyle = filled ? COLORS.sugar : withAlpha(COLORS.sugar, 0.18);
     ctx.fill();
     ctx.strokeStyle = filled ? COLORS.sugar : COLORS.rule;
     ctx.lineWidth = 1;

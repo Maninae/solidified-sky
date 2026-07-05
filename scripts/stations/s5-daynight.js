@@ -21,6 +21,7 @@ import { COLORS } from '../tokens.js';
 import { mountStage } from '../engine.js';
 import { ParticleSystem } from '../particles.js';
 import { drawSun, drawStoma, roundedLeafPath } from '../primitives.js';
+import { smoothstep, withAlpha } from '../util.js';
 
 // ---- day-cycle model -----------------------------------------------------
 
@@ -48,7 +49,7 @@ function moonArc(f) {
 
 // Smooth 0..1 ambient light: 0 at midnight, 1 at midday, with soft twilight
 // transitions (0.20–0.30 dawn, 0.70–0.80 dusk). Drives the star alpha.
-function smoothstep(a, b, t) { const s = Math.max(0, Math.min(1, (t - a) / (b - a))); return s * s * (3 - 2 * s); }
+// smoothstep is hoisted to util.js and uses the GLSL (edge0, edge1, x) order.
 const ambientLight = (f) => Math.max(0, smoothstep(0.20, 0.30, f) - smoothstep(0.70, 0.80, f));
 
 // ---- sky palette ---------------------------------------------------------
@@ -129,9 +130,9 @@ function drawLeaf(ctx, cx, cy, w, h, glowK) {
   ctx.shadowBlur = 10 + 20 * glowK;
   const leaf = roundedLeafPath(cx, cy, w, h);
   const g = ctx.createRadialGradient(cx, cy, 8, cx, cy, w / 2);
-  g.addColorStop(0,   `rgba(140, 245, 175, ${0.35 + 0.45 * glowK})`);
-  g.addColorStop(0.7, `rgba(74, 222, 128, ${0.30 + 0.30 * glowK})`);
-  g.addColorStop(1,   'rgba(24, 100, 55, 0.55)');
+  g.addColorStop(0,   `rgba(140, 245, 175, ${0.35 + 0.45 * glowK})`);  // bespoke light-chloro tint
+  g.addColorStop(0.7, withAlpha(COLORS.chloro, 0.30 + 0.30 * glowK));
+  g.addColorStop(1,   'rgba(24, 100, 55, 0.55)');                       // bespoke dark-chloro shade
   ctx.fillStyle = g;
   ctx.fill(leaf);
   ctx.shadowBlur = 0;
@@ -187,7 +188,11 @@ function drawRespirationBadge(ctx, x, y, pulse) {
 // ---- station init --------------------------------------------------------
 
 export function init(sectionEl) {
-  try {
+  try { mount(sectionEl); }
+  catch (err) { console.error('[s5-daynight] init failed:', err); }
+}
+
+function mount(sectionEl) {
     const canvas    = sectionEl.querySelector('#s5-canvas');
     const slider    = sectionEl.querySelector('#s5-time');
     const timeLabel = sectionEl.querySelector('#s5-time-val');
@@ -306,7 +311,4 @@ export function init(sectionEl) {
       ps.update(dt);
       ps.draw(ctx);
     }, { background: COLORS.bgDeep });
-  } catch (e) {
-    console.error('s5-daynight failed to init:', e);
-  }
 }

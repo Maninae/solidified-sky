@@ -20,6 +20,9 @@ import {
   drawTree, drawLeafCrossSection, drawLeafCell, roundedLeafPath, drawSun,
 } from '../primitives.js';
 import { ParticleSystem, bezierPath } from '../particles.js';
+import { clamp, smoothstep, roundRect, prefersReducedMotion } from '../util.js';
+
+const REDUCED_MOTION = prefersReducedMotion();
 
 /* Four semantic-zoom scenes. name → slider label; size + read → readout. */
 const SCENES = [
@@ -33,18 +36,15 @@ const SCENES = [
     read: 'One mesophyll cell - dozens of chloroplasts do the work.' },
 ];
 
-const smoothstep = (x, a, b) => {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
-const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-const rand  = (a, b) => a + Math.random() * (b - a);
+// smoothstep + clamp hoisted to util.js. `rand` stays local; it's only used
+// here for the CO₂/O₂ flow spawners at the bottom of this file.
+const rand = (a, b) => a + Math.random() * (b - a);
 
 /* Global u → per-scene weights (sum ≈ 1) and each scene's local depth. */
 function sceneMix(u) {
-  const t1 = smoothstep(u, 0.15, 0.30);
-  const t2 = smoothstep(u, 0.45, 0.60);
-  const t3 = smoothstep(u, 0.70, 0.85);
+  const t1 = smoothstep(0.15, 0.30, u);
+  const t2 = smoothstep(0.45, 0.60, u);
+  const t3 = smoothstep(0.70, 0.85, u);
   return {
     weights: {
       tree:  1 - t1,
@@ -64,74 +64,74 @@ function sceneMix(u) {
 /* ------------------------------------------------------------------------- */
 
 export function init(sectionEl) {
-  try {
-    const canvas   = sectionEl.querySelector('#s1-canvas');
-    const slider   = sectionEl.querySelector('#s1-zoom');
-    const valLabel = sectionEl.querySelector('#s1-zoom-val');
-    const readout  = sectionEl.querySelector('#s1-readout');
-    if (!canvas || !slider) return;
+  try { mount(sectionEl); }
+  catch (err) { console.error('[s1-zoom] init failed:', err); }
+  // Panel prose + slider survive; the canvas just stays dark.
+}
 
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const system = new ParticleSystem(120);
-    let u = slider.valueAsNumber / 1000;
+function mount(sectionEl) {
+  const canvas   = sectionEl.querySelector('#s1-canvas');
+  const slider   = sectionEl.querySelector('#s1-zoom');
+  const valLabel = sectionEl.querySelector('#s1-zoom-val');
+  const readout  = sectionEl.querySelector('#s1-readout');
+  if (!canvas || !slider) return;
 
-    const updateReadout = () => {
-      const { weights } = sceneMix(u);
-      let best = SCENES[0], bestW = -1;
-      for (const s of SCENES) if (weights[s.key] > bestW) { bestW = weights[s.key]; best = s; }
-      if (valLabel) valLabel.textContent = best.name;
-      if (readout)  readout.textContent  = `${best.size} - ${best.read}`;
-    };
+  const system = new ParticleSystem(120);
+  let u = slider.valueAsNumber / 1000;
+
+  const updateReadout = () => {
+    const { weights } = sceneMix(u);
+    let best = SCENES[0], bestW = -1;
+    for (const s of SCENES) if (weights[s.key] > bestW) { bestW = weights[s.key]; best = s; }
+    if (valLabel) valLabel.textContent = best.name;
+    if (readout)  readout.textContent  = `${best.size} - ${best.read}`;
+  };
+  updateReadout();
+
+  /* CO₂/O₂ flow spawner - only fires while scenes 3-4 are on-screen. */
+  let flowClock = 0;
+  const trySpawnFlow = (dt, W, H, weights) => {
+    if (REDUCED_MOTION) return;
+    const active = weights.cross + weights.cell;
+    if (active < 0.15) { flowClock = 0; return; }
+    flowClock += dt;
+    while (flowClock >= 0.55) {
+      flowClock -= 0.55;
+      if (weights.cross > weights.cell) spawnCrossFlow(system, W, H);
+      else                              spawnCellFlow (system, W, H);
+    }
+  };
+
+  const stage = mountStage(canvas, (ctx, dt, t, W, H) => {
+    const { weights, depths } = sceneMix(u);
+    const viewW = Math.min(W, 900);
+    const viewH = H;
+
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    if (weights.tree  > 0.01) drawTreeScene (ctx, viewW, viewH, depths.tree,  weights.tree,  t);
+    if (weights.leaf  > 0.01) drawLeafScene (ctx, viewW, viewH, depths.leaf,  weights.leaf );
+    if (weights.cross > 0.01) drawCrossScene(ctx, viewW, viewH, depths.cross, weights.cross);
+    if (weights.cell  > 0.01) drawCellScene (ctx, viewW, viewH, depths.cell,  weights.cell );
+
+    // Only the dominant scene's labels draw, so they never collide.
+    let bestKey = 'tree', bestW = 0;
+    for (const s of SCENES) if (weights[s.key] > bestW) { bestW = weights[s.key]; bestKey = s.key; }
+    drawLabels(ctx, viewW, viewH, bestKey, bestW);
+    ctx.restore();
+
+    // Particles use canvas-absolute coords (they don't share our transform).
+    trySpawnFlow(dt, W, H, weights);
+    system.update(dt);
+    system.draw(ctx);
+  }, { background: COLORS.bgDeep });
+
+  // prefers-reduced-motion: Stage paints once. Repaint on scrub.
+  slider.addEventListener('input', () => {
+    u = slider.valueAsNumber / 1000;
     updateReadout();
-
-    /* CO₂/O₂ flow spawner - only fires while scenes 3-4 are on-screen. */
-    let flowClock = 0;
-    const trySpawnFlow = (dt, W, H, weights) => {
-      if (reducedMotion) return;
-      const active = weights.cross + weights.cell;
-      if (active < 0.15) { flowClock = 0; return; }
-      flowClock += dt;
-      while (flowClock >= 0.55) {
-        flowClock -= 0.55;
-        if (weights.cross > weights.cell) spawnCrossFlow(system, W, H);
-        else                              spawnCellFlow (system, W, H);
-      }
-    };
-
-    const stage = mountStage(canvas, (ctx, dt, t, W, H) => {
-      const { weights, depths } = sceneMix(u);
-      const viewW = Math.min(W, 900);
-      const viewH = H;
-
-      ctx.save();
-      ctx.translate(W / 2, H / 2);
-      if (weights.tree  > 0.01) drawTreeScene (ctx, viewW, viewH, depths.tree,  weights.tree,  t);
-      if (weights.leaf  > 0.01) drawLeafScene (ctx, viewW, viewH, depths.leaf,  weights.leaf );
-      if (weights.cross > 0.01) drawCrossScene(ctx, viewW, viewH, depths.cross, weights.cross);
-      if (weights.cell  > 0.01) drawCellScene (ctx, viewW, viewH, depths.cell,  weights.cell );
-
-      // Only the dominant scene's labels draw, so they never collide.
-      let bestKey = 'tree', bestW = 0;
-      for (const s of SCENES) if (weights[s.key] > bestW) { bestW = weights[s.key]; bestKey = s.key; }
-      drawLabels(ctx, viewW, viewH, bestKey, bestW);
-      ctx.restore();
-
-      // Particles use canvas-absolute coords (they don't share our transform).
-      trySpawnFlow(dt, W, H, weights);
-      system.update(dt);
-      system.draw(ctx);
-    }, { background: COLORS.bgDeep });
-
-    // prefers-reduced-motion: Stage paints once. Repaint on scrub.
-    slider.addEventListener('input', () => {
-      u = slider.valueAsNumber / 1000;
-      updateReadout();
-      if (reducedMotion) stage._renderStatic?.();
-    });
-  } catch (err) {
-    console.error('[s1-zoom] init failed:', err);
-    // Panel prose + slider survive; the canvas just stays dark.
-  }
+    if (REDUCED_MOTION) stage.renderStatic();
+  });
 }
 
 /* -------- scenes --------
@@ -270,29 +270,16 @@ function drawLabels(ctx, W, H, sceneKey, alpha) {
     // Center around (fx*W, fy*H), then clamp so nothing hides at edges.
     let x = clamp(L.fx * W - tw / 2, -W/2 + 8, W/2 - tw - 8);
     let y = clamp(L.fy * H,          -H/2 + 12, H/2 - 12);
-    ctx.fillStyle = 'rgba(8, 22, 15, 0.78)';
-    ctx.beginPath();
+    ctx.fillStyle = 'rgba(8, 22, 15, 0.78)';            // bespoke pill bg
     roundRect(ctx, x - pad, y - 10, tw + pad * 2, 20, 6);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(150, 200, 170, 0.28)';
+    ctx.strokeStyle = 'rgba(150, 200, 170, 0.28)';      // bespoke rule-family
     ctx.lineWidth = 1;
     ctx.stroke();
-    ctx.fillStyle = 'rgba(232, 242, 234, 0.95)';
+    ctx.fillStyle = 'rgba(232, 242, 234, 0.95)';        // textPrimary at α
     ctx.fillText(L.text, x, y);
   }
   ctx.restore();
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
 }
 
 /* -------- particle flows --------

@@ -1,21 +1,22 @@
 /* stations/s2-chloroplast.js - Station 2: "Meet the Chloroplast".
- *
- * A large code-drawn chloroplast the reader can take apart. 2.5D parallax on
- * mousemove (envelope holds still, grana slide most; touch devices auto-sway);
- * clicking any granum, the stroma, or the envelope rim reveals an on-canvas
- * label + a one-line caption in #s2-readout; the "Take the tour" button
- * spotlights envelope → grana → stroma at ~2.5 s each, and "Reset labels"
- * clears everything. Organelles from primitives.js, colors from tokens.js;
- * a small ParticleSystem drifts H₂O and CO₂ through the stroma. */
+
+   A large code-drawn chloroplast the reader can take apart. 2.5D parallax on
+   mousemove (envelope holds still, grana slide most; touch devices auto-sway);
+   clicking any granum, the stroma, or the envelope rim reveals an on-canvas
+   label + a one-line caption in #s2-readout; the "Take the tour" button
+   spotlights envelope → grana → stroma at ~2.5 s each, and "Reset labels"
+   clears everything. Organelles from primitives.js, colors from tokens.js;
+   a small ParticleSystem drifts H₂O and CO₂ through the stroma. */
 
 import { COLORS } from '../tokens.js';
 import { drawStroma, drawThylakoidStack, superellipsePath } from '../primitives.js';
 import { mountStage } from '../engine.js';
 import { ParticleSystem } from '../particles.js';
+import { roundRect, withAlpha, prefersReducedMotion } from '../util.js';
 
-const mm = (q) => (typeof window !== 'undefined' && window.matchMedia?.(q).matches);
-const REDUCED_MOTION = mm('(prefers-reduced-motion: reduce)');
-const IS_TOUCH       = mm('(hover: none)');
+const REDUCED_MOTION = prefersReducedMotion();
+const IS_TOUCH       = typeof window !== 'undefined' &&
+                       !!window.matchMedia?.('(hover: none)').matches;
 
 /* Granum seat positions, as fractions of the chloroplast's half-a / half-b. */
 const GRANA = [
@@ -156,13 +157,6 @@ function mount(sectionEl) {
 
   const stage = mountStage(canvas, render, { background: COLORS.bgDeep });
 
-  /* Force one static frame (reduced-motion, or waiting for the next rAF). */
-  const requestRedraw = () => {
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = COLORS.bgDeep;
-    ctx.fillRect(0, 0, stage.width, stage.height);
-    render(ctx, 0, 0, stage.width, stage.height);
-  };
   const setReadout = (p) => { readout.innerHTML = `<strong>${p.title}.</strong> ${p.body}`; };
   const resetReadout = () => { readout.textContent = 'Click a part, or take the tour.'; };
 
@@ -172,10 +166,10 @@ function mount(sectionEl) {
     state.labels.add(TOUR_ORDER[0]);
     setReadout(PARTS[TOUR_ORDER[0]]);
     btnTour.textContent = 'Stop tour';
-    if (REDUCED_MOTION) requestRedraw();
+    if (REDUCED_MOTION) stage.renderStatic();
   };
   const stopTour = () => { state.tour = null; btnTour.textContent = 'Take the tour'; };
-  const resetAll = () => { stopTour(); state.labels.clear(); resetReadout(); requestRedraw(); };
+  const resetAll = () => { stopTour(); state.labels.clear(); resetReadout(); stage.renderStatic(); };
 
   btnTour.addEventListener('click', () => { state.tour ? stopTour() : startTour(); });
   btnReset.addEventListener('click', resetAll);
@@ -195,13 +189,13 @@ function mount(sectionEl) {
     if (state.tour) stopTour();          // manual clicks abort a running tour
     state.labels.add(hit);
     setReadout(PARTS[hit]);
-    if (REDUCED_MOTION) requestRedraw();
+    if (REDUCED_MOTION) stage.renderStatic();
   });
 
   // Prime layout + a static first frame in case Stage's initial box was zero.
   layout(stage.width || canvas.clientWidth || 860,
          stage.height || canvas.clientHeight || 480);
-  if (REDUCED_MOTION) requestRedraw();
+  if (REDUCED_MOTION) stage.renderStatic();
 }
 
 /* ---------- geometry ---------- */
@@ -234,8 +228,8 @@ function drawEnvelope(ctx, cx, cy, a, b) {
   ctx.translate(cx, cy);
   // Faint outer halo so the whole organelle glows.
   const halo = ctx.createRadialGradient(0, 0, Math.min(a, b) * 0.55, 0, 0, Math.max(a, b) * 1.15);
-  halo.addColorStop(0, 'rgba(74, 222, 128, 0)');
-  halo.addColorStop(1, 'rgba(74, 222, 128, 0.14)');
+  halo.addColorStop(0, withAlpha(COLORS.chloro, 0));
+  halo.addColorStop(1, withAlpha(COLORS.chloro, 0.14));
   ctx.fillStyle = halo;
   ctx.fill(superellipsePath(0, 0, a + 6, b + 6, N_ENVELOPE));
   // Outer membrane (bright rim) then inner (thinner, offset inward).
@@ -250,7 +244,7 @@ function drawEnvelope(ctx, cx, cy, a, b) {
 function drawSpotlight(ctx, state, part) {
   const [tx, ty, tr] = spotlightTarget(state, part);
   ctx.save();
-  ctx.fillStyle = 'rgba(4, 16, 11, 0.55)';
+  ctx.fillStyle = withAlpha(COLORS.bgDeep, 0.55);
   ctx.fillRect(0, 0, state.W, state.H);
   const g = ctx.createRadialGradient(tx, ty, 4, tx, ty, tr);
   g.addColorStop(0,    'rgba(0,0,0,1)');
@@ -317,8 +311,10 @@ function drawLabels(ctx, state) {
 
     // Pill: fill + green outline + text.
     roundRect(ctx, bx, by, pillW, pillH, 6);
-    ctx.fillStyle = 'rgba(8, 23, 15, 0.86)'; ctx.fill();
-    ctx.strokeStyle = 'rgba(74, 222, 128, 0.35)'; ctx.stroke();
+    ctx.fillStyle = 'rgba(8, 23, 15, 0.86)';           // bgSurface-family
+    ctx.fill();
+    ctx.strokeStyle = withAlpha(COLORS.chloro, 0.35);
+    ctx.stroke();
     ctx.fillStyle = COLORS.textPrimary;
     ctx.fillText(text, bx + 7, by + 5);
 
@@ -329,12 +325,3 @@ function drawLabels(ctx, state) {
   ctx.restore();
 }
 
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);         ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);     ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);         ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-}

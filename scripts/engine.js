@@ -6,14 +6,13 @@
    reduced motion, the Stage paints a single static frame instead of looping. */
 
 import { COLORS } from './tokens.js';
+import { prefersReducedMotion } from './util.js';
 
 // Any frame longer than 33 ms (window blurred, tab throttled, etc.) is capped
 // so a resumed animation never lurches forward by a huge dt.
 const DT_CAP = 1 / 30;
 
-const REDUCED_MOTION =
-  typeof window !== 'undefined' &&
-  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const REDUCED_MOTION = prefersReducedMotion();
 
 export class Stage {
   /* Wraps one <canvas>.
@@ -47,7 +46,7 @@ export class Stage {
     this.resize();
 
     if (opts.autostart !== false && !REDUCED_MOTION) this.start();
-    else this._renderStatic();
+    else this.renderStatic();
   }
 
   get width()  { return this._W; }
@@ -75,12 +74,12 @@ export class Stage {
 
     // Keep the static frame in sync if we're not running (reduced motion, or
     // stopped by the IntersectionObserver).
-    if (!this._running) this._renderStatic();
+    if (!this._running) this.renderStatic();
   }
 
   start() {
     if (this._running) return;
-    if (REDUCED_MOTION) { this._renderStatic(); return; }
+    if (REDUCED_MOTION) { this.renderStatic(); return; }
     this._running = true;
     this._t0 = performance.now();
     this._tPrev = this._t0;
@@ -107,7 +106,7 @@ export class Stage {
     this._ro?.disconnect();
   }
 
-  _renderStatic() { this._frame(0, 0); }
+  renderStatic() { this._frame(0, 0); }
 
   _frame(dt, t) {
     const { ctx, _W: W, _H: H } = this;

@@ -20,9 +20,14 @@ import { COLORS } from '../tokens.js';
 import { mountStage } from '../engine.js';
 import { ParticleSystem, catmullRom } from '../particles.js';
 import { drawThylakoidMembrane, drawSun } from '../primitives.js';
+import { roundRect, withAlpha } from '../util.js';
 
 export function init(sectionEl) {
-  try {
+  try { mount(sectionEl); }
+  catch (err) { console.error('[s3-light] init failed:', err); }
+}
+
+function mount(sectionEl) {
     const canvas  = sectionEl.querySelector('#s3-canvas');
     const lightEl = sectionEl.querySelector('#s3-light');
     const lightVal= sectionEl.querySelector('#s3-light-val');
@@ -188,16 +193,6 @@ export function init(sectionEl) {
 
     /* -------- drawing helpers -------- */
 
-    function roundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.arcTo(x + w, y, x + w, y + h, r);
-      ctx.arcTo(x + w, y + h, x, y + h, r);
-      ctx.arcTo(x, y + h, x, y, r);
-      ctx.arcTo(x, y, x + w, y, r);
-      ctx.closePath();
-    }
-
     function drawRegions(ctx, L) {
       const memTop = L.membraneY - L.membraneH / 2;
       const memBot = L.membraneY + L.membraneH / 2;
@@ -223,9 +218,9 @@ export function init(sectionEl) {
       ctx.shadowColor = COLORS.chloro;
       ctx.shadowBlur = 12;
       const g = ctx.createLinearGradient(0, memY - h/2, 0, memY + h/2);
-      g.addColorStop(0,   'rgba(160, 255, 195, 0.65)');
-      g.addColorStop(0.5, 'rgba(74, 222, 128, 0.75)');
-      g.addColorStop(1,   'rgba(40, 170, 95, 0.60)');
+      g.addColorStop(0,   'rgba(160, 255, 195, 0.65)');   // bespoke light-chloro tint
+      g.addColorStop(0.5, withAlpha(COLORS.chloro, 0.75));
+      g.addColorStop(1,   'rgba(40, 170, 95, 0.60)');     // bespoke dark-chloro shade
       ctx.fillStyle = g;
       roundRect(ctx, x - w/2, memY - h/2, w, h, 9);
       ctx.fill();
@@ -252,6 +247,9 @@ export function init(sectionEl) {
         ctx.save();
         ctx.rotate((Math.PI * 2 / 3) * i);
         const lg = ctx.createRadialGradient(11, 0, 0, 11, 0, 12);
+        // Rotor lobe: bright warm core, ATP-adjacent gold at edge. The rgba
+        // is close to COLORS.atp (#fbbf24) but 4 red-channel counts higher;
+        // preserved as-is per the "no color values change" rule.
         lg.addColorStop(0, '#fff2b8');
         lg.addColorStop(1, 'rgba(255, 191, 36, 0.55)');
         ctx.fillStyle = lg;
@@ -346,7 +344,4 @@ export function init(sectionEl) {
     }
 
     mountStage(canvas, render, { background: COLORS.bgDeep });
-  } catch (err) {
-    console.error('s3-light init failed:', err);
-  }
 }

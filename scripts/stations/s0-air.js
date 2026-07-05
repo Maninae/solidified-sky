@@ -31,6 +31,7 @@ import { COLORS } from '../tokens.js';
 import { mountStage } from '../engine.js';
 import { drawTree, drawSun } from '../primitives.js';
 import { ParticleSystem, bezierPath } from '../particles.js';
+import { lerp, mixHex, withAlpha } from '../util.js';
 
 // --- The pedagogical truth --------------------------------------------------
 // Rough percentages of a tree's DRY mass. Standard plant-biochem values:
@@ -52,52 +53,50 @@ const ARRIVE_FLASH    = 0.6;   // seconds a green halo lingers after arrival
 
 /* Mount the station: wire DOM, start the always-alive render loop. */
 export function init(sectionEl) {
-  try {
-    const canvas   = sectionEl.querySelector('#s0-canvas');
-    const slider   = sectionEl.querySelector('#s0-soil');
-    const soilVal  = sectionEl.querySelector('#s0-soil-val');
-    const revealBt = sectionEl.querySelector('#s0-reveal');
-    const readout  = sectionEl.querySelector('#s0-readout');
-    if (!canvas) { console.error('[s0-air] missing #s0-canvas'); return; }
+  try { mount(sectionEl); }
+  catch (err) { console.error('[s0-air] init failed:', err); }
+}
 
-    const state = {
-      guess: Number(slider?.value ?? 70),  // reader's soil-% guess
-      revealed: false,                     // has the reveal button been pressed?
-      revealT: 0,                          // 0..1 progress of the reveal snap
-      spawnAcc: 0,                         // spawn timer accumulator (seconds)
-      lastArriveT: -10,                    // clock time of last CO₂ absorption
-      arrivals: 0,                         // total CO₂ arrivals, drives growth
-      tNow: 0,                             // last frame's t (for onArrive closure)
-    };
+function mount(sectionEl) {
+  const canvas   = sectionEl.querySelector('#s0-canvas');
+  const slider   = sectionEl.querySelector('#s0-soil');
+  const soilVal  = sectionEl.querySelector('#s0-soil-val');
+  const revealBt = sectionEl.querySelector('#s0-reveal');
+  const readout  = sectionEl.querySelector('#s0-readout');
+  if (!canvas) { console.error('[s0-air] missing #s0-canvas'); return; }
 
-    const particles = new ParticleSystem(180);
+  // State: reader's soil-% guess + reveal button/animation progress + CO₂
+  // spawn timing and arrival bookkeeping (drives tree growth + halo pulse).
+  const state = {
+    guess: Number(slider?.value ?? 70),
+    revealed: false, revealT: 0,
+    spawnAcc: 0, lastArriveT: -10, arrivals: 0, tNow: 0,
+  };
 
-    if (slider && soilVal) {
+  const particles = new ParticleSystem(180);
+
+  if (slider && soilVal) {
+    soilVal.textContent = state.guess + '%';
+    slider.addEventListener('input', () => {
+      state.guess = Number(slider.value);
       soilVal.textContent = state.guess + '%';
-      slider.addEventListener('input', () => {
-        state.guess = Number(slider.value);
-        soilVal.textContent = state.guess + '%';
-        if (readout && !state.revealed) readout.textContent = guessBlurb(state.guess);
-      });
-    }
-    if (revealBt) {
-      revealBt.addEventListener('click', () => {
-        if (state.revealed) return;
-        state.revealed = true;
-        state.revealT = 0;
-        if (readout) readout.textContent = revealBlurb();
-        revealBt.disabled = true;
-        revealBt.textContent = 'Revealed';
-      });
-    }
-
-    mountStage(canvas, (ctx, dt, t, W, H) => {
-      renderFrame(ctx, dt, t, W, H, state, particles);
-    }, { background: COLORS.bgDeep });
-
-  } catch (err) {
-    console.error('[s0-air] init failed:', err);
+      if (readout && !state.revealed) readout.textContent = guessBlurb(state.guess);
+    });
   }
+  if (revealBt) {
+    revealBt.addEventListener('click', () => {
+      if (state.revealed) return;
+      state.revealed = true;
+      state.revealT = 0;
+      if (readout) readout.textContent = revealBlurb();
+      revealBt.disabled = true;
+      revealBt.textContent = 'Revealed';
+    });
+  }
+
+  mountStage(canvas, (ctx, dt, t, W, H) => {
+    renderFrame(ctx, dt, t, W, H, state, particles);
+  }, { background: COLORS.bgDeep });
 }
 
 /* --------------------------------------------------------------------------
@@ -170,8 +169,8 @@ function drawTreeScene(ctx, s, t, state) {
     ctx.globalCompositeOperation = 'lighter';
     const cx = tx, cy = ty - H * 0.7;
     const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * 0.55);
-    halo.addColorStop(0, `rgba(74, 222, 128, ${a})`);
-    halo.addColorStop(1, 'rgba(74, 222, 128, 0)');
+    halo.addColorStop(0, withAlpha(COLORS.chloro, a));
+    halo.addColorStop(1, withAlpha(COLORS.chloro, 0));
     ctx.fillStyle = halo;
     ctx.fillRect(s.x, s.y, s.w, s.h);
     ctx.restore();
@@ -333,21 +332,9 @@ function drawSegLabel(ctx, x, y, color, name, pct, alpha) {
 }
 
 /* --------------------------------------------------------------------------
-   Small helpers. */
-
-function lerp(a, b, t) { return a + (b - a) * t; }
+   Small helpers. lerp + mixHex live in util.js. */
 
 function pctText(p) { return Math.round(p) + '%'; }
-
-// Hex → hex linear color mix in sRGB space. Good enough for label chips.
-function mixHex(a, b, t) {
-  const ra = parseInt(a.slice(1, 3), 16), ga = parseInt(a.slice(3, 5), 16), ba = parseInt(a.slice(5, 7), 16);
-  const rb = parseInt(b.slice(1, 3), 16), gb = parseInt(b.slice(3, 5), 16), bb = parseInt(b.slice(5, 7), 16);
-  const r = Math.round(ra + (rb - ra) * t);
-  const g = Math.round(ga + (gb - ga) * t);
-  const bl = Math.round(ba + (bb - ba) * t);
-  return `rgb(${r}, ${g}, ${bl})`;
-}
 
 /* Readout copy - plain, declarative, no rhetorical questions. */
 

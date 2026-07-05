@@ -3,7 +3,8 @@
    glossary, and lazily mounts each station when it nears the viewport. Station
    internals live in scripts/stations/*; here we only call their init(section). */
 
-import { EQUATION, MOLECULES, COLORS } from './tokens.js';
+import { EQUATION, COLORS } from './tokens.js';
+import { withAlpha } from './util.js';
 import { mountStage } from './engine.js';
 import { ParticleSystem } from './particles.js';
 import { initGlossary } from './glossary.js';
@@ -45,8 +46,8 @@ function buildHero() {
     // dark radial wash so the title reads
     ctx.clearRect(0, 0, W, H);
     const g = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.4, Math.max(W, H) * 0.7);
-    g.addColorStop(0, 'rgba(20,48,32,0.55)');
-    g.addColorStop(1, 'rgba(4,16,11,0)');
+    g.addColorStop(0, 'rgba(20,48,32,0.55)');           // bespoke warm-green core
+    g.addColorStop(1, withAlpha(COLORS.bgDeep, 0));
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
@@ -65,7 +66,6 @@ function buildHero() {
         scale: type === 'photon' ? 1 : 0.8,
       });
     }
-    // recycle particles that leave the canvas
     ps.update(dt);
     ps.draw(ctx);
   }, { background: null });
