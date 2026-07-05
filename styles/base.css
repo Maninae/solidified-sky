@@ -1,0 +1,435 @@
+/* Solidified Sky — base stylesheet.
+   Design system: "living cell in the dark" — a dark forest-green depth where
+   photons, electrons and molecules glow. Sibling to Valence's dark-lab look.
+
+   ALL theming via :root custom properties. Never hardcode a color in a rule.
+
+   THE MOLECULE COLOR LAW (the single most important rule on the site — this is
+   pedagogy, not decoration). Every molecule has ONE fixed color used
+   EVERYWHERE it appears — in canvas particles, in prose, in legends, in
+   equations. If a visual shows CO2 it is red; H2O is blue; O2 is orange.
+   JS mirrors these exact values in scripts/tokens.js — keep the two in sync. */
+
+:root {
+  /* ---- backgrounds, darkest to lightest ---- */
+  --bg-deep: #04100b;      /* near-black forest green — the void inside a cell */
+  --bg-surface: #08170f;
+  --bg-elevated: #0e2016;
+  --bg-hover: #143020;
+
+  /* ---- text ---- */
+  --text-primary: #e8f2ea;
+  --text-secondary: #a6bcae;
+  --text-muted: #6a8377;
+
+  /* ---- primary accents ---- */
+  --accent: #4ade80;       /* chlorophyll green — links, primary glow */
+  --accent-2: #ffd54a;     /* sunlight gold — secondary */
+
+  /* ================= THE MOLECULE COLOR LAW ================= */
+  --co2:     #f87171;      /* carbon dioxide — red */
+  --h2o:     #60a5fa;      /* water — blue */
+  --o2:      #fb923c;      /* oxygen — orange */
+  --atp:     #fbbf24;      /* ATP energy carrier — yellow */
+  --nadph:   #a78bfa;      /* NADPH electron carrier — violet */
+  --sugar:   #d8a15e;      /* glucose / G3P — warm brown */
+  --photon:  #ffe066;      /* light — gold */
+  --electron:#38e0d0;      /* excited electron — cyan */
+  --proton:  #f5b8d0;      /* H+ proton — pale pink */
+  --chloro:  #4ade80;      /* chlorophyll — green */
+  --rubisco: #5eead4;      /* the enzyme rubisco — teal */
+  /* ========================================================= */
+
+  /* ---- semantic (callouts, states) ---- */
+  --blue: #60a5fa;
+  --green: #4ade80;
+  --purple: #a78bfa;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+
+  /* ---- rules ---- */
+  --rule: rgba(150, 200, 170, 0.12);
+  --rule-strong: rgba(150, 200, 170, 0.26);
+
+  /* ---- fonts ---- */
+  --display: "Space Grotesk", system-ui, sans-serif;
+  --sans: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---- layout ---- */
+  --sidebar-w: 260px;
+  --content-max: 760px;
+  --stage-max: 900px;
+}
+
+/* ---------- reset / base ---------- */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: rgba(74, 222, 128, 0.26); }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+strong { color: var(--text-primary); }
+
+/* ---------- molecule-colored inline text ---------- */
+/* Use these to color a molecule's NAME in prose so it matches its particle. */
+.m-co2     { color: var(--co2); }
+.m-h2o     { color: var(--h2o); }
+.m-o2      { color: var(--o2); }
+.m-atp     { color: var(--atp); }
+.m-nadph   { color: var(--nadph); }
+.m-sugar   { color: var(--sugar); }
+.m-photon  { color: var(--photon); }
+.m-electron{ color: var(--electron); }
+.m-chloro  { color: var(--chloro); }
+.m-rubisco { color: var(--rubisco); }
+.m-co2, .m-h2o, .m-o2, .m-atp, .m-nadph, .m-sugar,
+.m-photon, .m-electron, .m-chloro, .m-rubisco { font-weight: 600; }
+
+/* little inline swatch dot, e.g. a legend chip */
+.swatch {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 99px;
+  vertical-align: 1px;
+  margin-right: 5px;
+  box-shadow: 0 0 8px currentColor;
+  background: currentColor;
+}
+
+/* ---------- progress bar ---------- */
+
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 10px var(--accent);
+  z-index: 100;
+}
+
+/* ---------- typography ---------- */
+
+article p { margin: 14px 0; color: var(--text-secondary); }
+article p strong, article li strong { color: var(--text-primary); }
+article ul, article ol { margin: 14px 0 14px 26px; color: var(--text-secondary); }
+article li { margin: 6px 0; }
+article hr { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
+
+article table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  font-size: 15px;
+}
+article th {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+article td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+
+/* ---------- callouts ---------- */
+
+.callout {
+  margin: 24px 0;
+  padding: 18px 22px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--text-muted);
+  background: var(--bg-surface);
+}
+.callout p { margin: 6px 0 0; }
+.callout p:first-of-type { margin-top: 0; }
+
+.callout-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+
+.callout.definition { border-left-color: var(--blue); background: color-mix(in srgb, var(--blue) 6%, var(--bg-surface)); }
+.callout.definition .callout-label { color: var(--blue); }
+.callout.insight { border-left-color: var(--green); background: color-mix(in srgb, var(--green) 6%, var(--bg-surface)); }
+.callout.insight .callout-label { color: var(--green); }
+.callout.example { border-left-color: var(--amber); background: color-mix(in srgb, var(--amber) 6%, var(--bg-surface)); }
+.callout.example .callout-label { color: var(--amber); }
+/* the load-bearing accuracy warnings (O2 comes from water, not CO2) */
+.callout.warn { border-left-color: var(--rose); background: color-mix(in srgb, var(--rose) 7%, var(--bg-surface)); }
+.callout.warn .callout-label { color: var(--rose); }
+
+/* ---------- collapsible deep-dives ---------- */
+
+details.collapsible {
+  margin: 24px 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-surface);
+}
+details.collapsible summary {
+  cursor: pointer;
+  padding: 14px 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  list-style: none;
+}
+details.collapsible summary::-webkit-details-marker { display: none; }
+details.collapsible summary::before {
+  content: "+";
+  font-family: var(--mono);
+  color: var(--accent);
+  margin-right: 10px;
+}
+details.collapsible[open] summary::before { content: "\2212"; }
+.collapsible-content { padding: 0 20px 18px; color: var(--text-secondary); }
+.collapsible-content p { margin: 10px 0; }
+
+/* ---------- inline glossary popups ---------- */
+/* A term the reader can click for a first-principles aside + external link. */
+.gloss {
+  border-bottom: 1px dashed var(--accent);
+  cursor: help;
+  color: var(--text-primary);
+}
+.gloss-pop {
+  position: absolute;
+  max-width: 300px;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 24px -10px var(--accent);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  z-index: 200;
+}
+.gloss-pop h5 {
+  font-family: var(--display);
+  font-size: 14.5px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.gloss-pop a { font-family: var(--mono); font-size: 12.5px; }
+
+/* ---------- interactive panels (shared with Valence's language) ---------- */
+
+.interactive {
+  margin: 34px 0;
+  padding: 24px 26px 22px;
+  background: var(--bg-surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 16px;
+  box-shadow: 0 0 50px -24px rgba(74, 222, 128, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.interactive-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.interactive-label::before {
+  content: "";
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 99px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+
+.interactive-title {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.interactive-hint {
+  font-size: 14.5px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.interactive-stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 14px;
+}
+.interactive-stage canvas,
+.interactive-stage svg {
+  display: block;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.interactive-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 26px;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+
+.control-group { display: flex; flex-direction: column; gap: 6px; min-width: 150px; }
+.control-group.row { flex-direction: row; align-items: center; gap: 10px; min-width: 0; }
+
+.control-label {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+.control-value { color: var(--text-primary); font-family: var(--mono); font-size: 13px; }
+
+.interactive-readout {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  min-height: 1.4em;
+}
+
+/* live numeric counters (day/night station, output meters) */
+.readout-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-top: 12px;
+}
+.readout-stat { display: flex; flex-direction: column; gap: 2px; }
+.readout-stat .rv {
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.readout-stat .rl {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* ---------- sliders ---------- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--bg-hover);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 99px;
+  background: var(--accent);
+  border: 2px solid var(--bg-deep);
+  box-shadow: 0 0 10px var(--accent);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 99px;
+  background: var(--accent);
+  border: 2px solid var(--bg-deep);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 9px;
+  border: 1px solid var(--rule-strong);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-elevated));
+  box-shadow: 0 0 18px -6px var(--accent);
+}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:disabled:hover { border-color: var(--rule-strong); }
+
+/* ---------- segmented toggles ---------- */
+.seg-toggle {
+  display: inline-flex;
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.seg-btn {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  padding: 7px 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.seg-btn:last-child { border-right: none; }
+.seg-btn[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+}
+
+/* ---------- footer ---------- */
+
+.site-footer {
+  margin: 90px auto 0;
+  max-width: var(--content-max);
+  padding: 24px 0 40px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.site-footer a { color: var(--text-secondary); }

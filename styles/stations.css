@@ -1,0 +1,245 @@
+/* stations.css — page layout: sidebar, hero, per-station rhythm, responsive.
+   base.css owns tokens + reusable components; this owns the page shell. */
+
+/* ---------- sidebar ---------- */
+
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  padding: 34px 22px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--rule);
+  overflow-y: auto;
+  z-index: 50;
+}
+.sidebar-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  display: block;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.sidebar-title:hover { text-decoration: none; color: var(--accent); }
+.sidebar-eyebrow {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+.toc { list-style: none; counter-reset: none; }
+.toc li { margin: 1px 0; }
+.toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 10px;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+.toc a:hover { background: var(--bg-hover); text-decoration: none; }
+.toc a.active {
+  border-left-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.toc .toc-n {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex: none;
+}
+.toc a.active .toc-n { color: var(--accent); }
+
+.sidebar-foot { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--rule); }
+.legend-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.legend { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.legend li {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
+/* legend swatches inherit color from the molecule class on the span */
+
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 12px; right: 12px;
+  z-index: 60;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+/* ---------- page + content column ---------- */
+
+.page { margin-left: var(--sidebar-w); padding: 0 48px 40px; }
+article { max-width: var(--content-max); margin: 0 auto; }
+
+/* wide interactives escape the prose column, centered on it */
+.wide, .interactive.wide {
+  width: min(var(--stage-max), calc(100vw - var(--sidebar-w) - 112px));
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  margin: 0 -48px;
+}
+.hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  padding: 60px 24px;
+  max-width: 720px;
+  background: radial-gradient(ellipse 62% 58% at center,
+    rgba(4, 16, 11, 0.82), rgba(4, 16, 11, 0.4) 55%, transparent 78%);
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.hero-title {
+  font-family: var(--display);
+  font-size: 74px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 0 0 20px;
+  text-shadow: 0 0 70px rgba(74, 222, 128, 0.4);
+}
+.hero-sub {
+  font-size: 18.5px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 26px;
+}
+.hero-sub em { color: var(--accent-2); font-style: italic; }
+.hero-equation {
+  font-family: var(--mono);
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  margin: 0 auto 30px;
+  padding: 14px 18px;
+  display: inline-block;
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+}
+.hero-cta {
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 99px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  transition: box-shadow 0.16s, background 0.16s;
+}
+.hero-cta:hover { text-decoration: none; box-shadow: 0 0 28px -6px var(--accent); background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  animation: bob 2.4s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+/* ---------- stations ---------- */
+
+.station { padding: 78px 0 20px; scroll-margin-top: 12px; }
+.station-head { margin-bottom: 10px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.station h2 {
+  font-family: var(--display);
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  scroll-margin-top: 24px;
+}
+.section-number {
+  font-family: var(--mono);
+  font-size: 0.5em;
+  font-weight: 500;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-right: 14px;
+  vertical-align: 0.3em;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    width: min(300px, 86vw);
+  }
+  .sidebar.open { transform: translateX(0); box-shadow: 0 0 60px rgba(0,0,0,0.6); }
+  .menu-toggle { display: block; }
+
+  .page { margin-left: 0; padding: 0 18px 40px; }
+  .hero { margin: 0 -18px; min-height: 88vh; }
+  .hero-title { font-size: 44px; }
+  .hero-sub { font-size: 16px; }
+  .hero-equation { font-size: 13px; padding: 10px 12px; }
+
+  .station { padding: 54px 0 16px; }
+  .station h2 { font-size: 27px; }
+  .section-number { margin-right: 8px; }
+
+  .wide, .interactive.wide { width: 100%; margin-left: 0; transform: none; }
+  .interactive { padding: 16px 14px; }
+  .interactive-controls { gap: 12px 18px; }
+  input[type="range"] { width: 150px; }
+  .readout-grid { gap: 16px; }
+}
