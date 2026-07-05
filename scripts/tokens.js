@@ -30,6 +30,14 @@ export const COLORS = {
   chloro:  "#4ade80",  // green
   rubisco: "#5eead4",  // teal (the enzyme)
 
+  // Non-molecule support colors used across renderers.
+  specular: "#ffffff",  // bright highlight / halo center
+  wood: {               // tree-trunk gradient stops (edge → mid → shadow)
+    edge:   "#3d2a1d",
+    mid:    "#5b3c26",
+    shadow: "#2a1c11",
+  },
+
   rule:       "rgba(150, 200, 170, 0.12)",
   ruleStrong: "rgba(150, 200, 170, 0.26)",
 };
