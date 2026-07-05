@@ -1,4 +1,4 @@
-/* primitives.js — the code-drawn art library. Every organic shape, organelle,
+/* primitives.js - the code-drawn art library. Every organic shape, organelle,
    and molecule species used across the page is drawn here.
 
    All draw functions are stateless: self-contained save()/restore(), take
@@ -50,7 +50,7 @@ function begin(ctx, x, y, opts) {
 /* -------------------------------------------------------------------------
    Organic shape helpers. Return Path2D so callers can fill/stroke/clip them. */
 
-/* A wobbly closed blob — a circle whose radius is perturbed by a small sum
+/* A wobbly closed blob - a circle whose radius is perturbed by a small sum
    of sines. Seeded so the shape is stable across reloads. */
 export function blobPath(cx, cy, r0, { harmonics = 3, amp = 0.12, seed = 1, points = 48 } = {}) {
   const rng = mulberry32(seed);
@@ -90,7 +90,7 @@ export function superellipsePath(cx, cy, a, b, n = 2.6) {
   return path;
 }
 
-/* A rounded leaf silhouette — vesica-like, symmetric around cy. w,h are the
+/* A rounded leaf silhouette - vesica-like, symmetric around cy. w,h are the
    full width and height. */
 export function roundedLeafPath(cx, cy, w, h) {
   const hw = w / 2, hh = h / 2;
@@ -108,7 +108,7 @@ export function roundedLeafPath(cx, cy, w, h) {
    Organelles and larger structures. Layered translucent fills + radial glows
    so each reads as an organic body, not a mechanical diagram. */
 
-/* Chloroplast — soft green lozenge, double envelope, a few grana stacks. */
+/* Chloroplast - soft green lozenge, double envelope, a few grana stacks. */
 export function drawChloroplast(ctx, x, y, opts = {}) {
   begin(ctx, x, y, opts);
   const { glow = true } = opts;
@@ -124,7 +124,7 @@ export function drawChloroplast(ctx, x, y, opts = {}) {
   ctx.fill(outer);
   ctx.shadowBlur = 0;
 
-  // Envelope — outer + inner membrane rings hint the double envelope.
+  // Envelope - outer + inner membrane rings hint the double envelope.
   ctx.lineWidth = 1.2;
   ctx.strokeStyle = 'rgba(200, 245, 215, 0.36)';
   ctx.stroke(outer);
@@ -139,7 +139,7 @@ export function drawChloroplast(ctx, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* A single granum — a stack of flat green thylakoid discs. */
+/* A single granum - a stack of flat green thylakoid discs. */
 export function drawThylakoidStack(ctx, x, y, opts = {}) {
   begin(ctx, x, y, opts);
   const { glow = true, count = 5 } = opts;
@@ -181,7 +181,7 @@ export function drawThylakoidMembrane(ctx, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* Stroma — fluid fill blob with a very subtle grain of specks. */
+/* Stroma - fluid fill blob with a very subtle grain of specks. */
 export function drawStroma(ctx, x, y, opts = {}) {
   const { w = 300, h = 180, seed = 3 } = opts;
   begin(ctx, x, y, opts);
@@ -203,7 +203,7 @@ export function drawStroma(ctx, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* Stoma — a leaf pore. Two crescent guard cells hug a central slit;
+/* Stoma - a leaf pore. Two crescent guard cells hug a central slit;
    opts.openness ∈ [0,1] widens the pore. */
 export function drawStoma(ctx, x, y, opts = {}) {
   const { openness = 1, glow = true } = opts;
@@ -219,7 +219,7 @@ export function drawStoma(ctx, x, y, opts = {}) {
   ctx.ellipse(0, gap/2 + 4, w/2, 4, 0, 0, Math.PI);
   ctx.fill();
   ctx.shadowBlur = 0;
-  // The pore itself — dark oval between the guard cells.
+  // The pore itself - dark oval between the guard cells.
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.beginPath();
   ctx.ellipse(0, 0, (w/2 - 4) * openness + 3, gap/2 + 0.5, 0, 0, Math.PI * 2);
@@ -227,7 +227,7 @@ export function drawStoma(ctx, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* A mesophyll cell — blobby cell wall with chloroplasts scattered inside. */
+/* A mesophyll cell - blobby cell wall with chloroplasts scattered inside. */
 export function drawLeafCell(ctx, x, y, opts = {}) {
   const { w = 180, h = 110, seed = 5, chloroplasts = 6 } = opts;
   begin(ctx, x, y, opts);
@@ -248,7 +248,7 @@ export function drawLeafCell(ctx, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* A leaf cross-section — the layered anatomy the zoom station drops through. */
+/* A leaf cross-section - the layered anatomy the zoom station drops through. */
 export function drawLeafCrossSection(ctx, x, y, opts = {}) {
   const { w = 700, h = 220, seed = 7 } = opts;
   begin(ctx, x, y, opts);
@@ -264,7 +264,7 @@ export function drawLeafCrossSection(ctx, x, y, opts = {}) {
   for (const L of layers) { ctx.fillStyle = L.fill; ctx.fillRect(-w/2, y0, w, L.h); y0 += L.h; }
 
   const rng = mulberry32(seed);
-  // Palisade cells — tall, tightly packed.
+  // Palisade cells - tall, tightly packed.
   const palY = -h/2 + 6 + 20 + 31;
   for (let i = 0; i < 8; i++) {
     const cx = -w/2 + 40 + i * (w - 80) / 7;
@@ -278,7 +278,7 @@ export function drawLeafCrossSection(ctx, x, y, opts = {}) {
                       { scale: 0.08, rot: rng()*Math.PI*2, glow: false });
     }
   }
-  // Spongy cells — irregular blobs with air gaps between.
+  // Spongy cells - irregular blobs with air gaps between.
   const sponY = -h/2 + 6 + 20 + 62 + 40;
   for (let i = 0; i < 12; i++) {
     const cx = -w/2 + 30 + rng() * (w - 60);
@@ -293,7 +293,7 @@ export function drawLeafCrossSection(ctx, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* A schematic tree — brown trunk plus a few overlapping green crown blobs. */
+/* A schematic tree - brown trunk plus a few overlapping green crown blobs. */
 export function drawTree(ctx, x, y, opts = {}) {
   const { seed = 11, height = 240, glow = true } = opts;
   begin(ctx, x, y, opts);
@@ -385,7 +385,7 @@ export function drawMolecule(ctx, type, x, y, opts = {}) {
   ctx.restore();
 }
 
-/* Ball-and-stick for co2 / h2o / o2 — just the balls, since sticks vanish at
+/* Ball-and-stick for co2 / h2o / o2 - just the balls, since sticks vanish at
    particle scale. Each atom gets a shaded sphere. */
 function drawAtomsBall(ctx, spec) {
   for (const a of spec.atoms) {
@@ -400,7 +400,7 @@ function drawAtomsBall(ctx, spec) {
   }
 }
 
-/* ATP — an 8-spike energy burst with a bright core. */
+/* ATP - an 8-spike energy burst with a bright core. */
 function drawBurst(ctx, spec) {
   const R = spec.r;
   const path = new Path2D();
@@ -424,7 +424,7 @@ function drawBurst(ctx, spec) {
   ctx.fill();
 }
 
-/* NADPH — a violet capsule (rounded pill). */
+/* NADPH - a violet capsule (rounded pill). */
 function drawCapsule(ctx, spec) {
   const w = spec.r * 2.4, h = spec.r * 1.3;
   const g = ctx.createLinearGradient(-w/2, 0, w/2, 0);
@@ -445,7 +445,7 @@ function drawCapsule(ctx, spec) {
   ctx.stroke(p);
 }
 
-/* Glucose — a brown hexagon ring. */
+/* Glucose - a brown hexagon ring. */
 function drawHexagon(ctx, spec) {
   const R = spec.r;
   const p = new Path2D();
@@ -472,7 +472,7 @@ function drawHexagon(ctx, spec) {
   ctx.stroke(ring);
 }
 
-/* G3P — three brown balls in a row (a 3-carbon fragment). */
+/* G3P - three brown balls in a row (a 3-carbon fragment). */
 function drawTriad(ctx, spec) {
   const r = spec.r * 0.55;
   const gap = spec.r * 0.9;
@@ -487,7 +487,7 @@ function drawTriad(ctx, spec) {
   }
 }
 
-/* Photon — a horizontal gold streak (rotate at the callsite for direction). */
+/* Photon - a horizontal gold streak (rotate at the callsite for direction). */
 function drawPhoton(ctx, spec) {
   ctx.globalCompositeOperation = 'lighter';
   const R = spec.r;
@@ -504,7 +504,7 @@ function drawPhoton(ctx, spec) {
   ctx.fill();
 }
 
-/* A soft glowing dot — used for H⁺ and any default "orb" molecule. */
+/* A soft glowing dot - used for H⁺ and any default "orb" molecule. */
 function drawDot(ctx, spec) {
   const R = spec.r;
   const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 1.7);
@@ -521,7 +521,7 @@ function drawDot(ctx, spec) {
   ctx.fill();
 }
 
-/* Electron — glowing cyan head with a short fading tail. Callers rotate the
+/* Electron - glowing cyan head with a short fading tail. Callers rotate the
    sprite by velocity so the tail always trails behind. */
 function drawElectron(ctx, spec) {
   ctx.globalCompositeOperation = 'lighter';
@@ -544,7 +544,7 @@ function drawElectron(ctx, spec) {
   ctx.fill();
 }
 
-/* The "carbon we're following" — a bright white orb ringed in gold. */
+/* The "carbon we're following" - a bright white orb ringed in gold. */
 function drawTagged(ctx, spec) {
   const R = spec.r;
   const g = ctx.createRadialGradient(0, 0, 0, 0, 0, R);

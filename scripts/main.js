@@ -1,4 +1,4 @@
-/* main.js — boot + integration glue.
+/* main.js - boot + integration glue.
    Builds the hero, wires the sidebar/scrollspy/progress bar, initializes the
    glossary, and lazily mounts each station when it nears the viewport. Station
    internals live in scripts/stations/*; here we only call their init(section). */

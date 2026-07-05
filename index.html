@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solidified Sky — Photosynthesis, drawn in code</title>
+<title>Solidified Sky - Photosynthesis, drawn in code</title>
 <meta name="description" content="A tree is made of air. Fly down into a living chloroplast and travel through photosynthesis while it runs - photons streaming in, water splitting, the Calvin cycle turning. Every molecule drawn and animated in code.">
-<meta property="og:title" content="Solidified Sky — Photosynthesis, drawn in code">
+<meta property="og:title" content="Solidified Sky - Photosynthesis, drawn in code">
 <meta property="og:description" content="An immersive, always-running molecular sim you move through. A tree is made of air.">
 <meta property="og:type" content="website">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -37,14 +37,14 @@
   <div class="sidebar-foot">
     <div class="legend-title">Molecule legend</div>
     <ul class="legend">
-      <li><span class="swatch m-co2"></span>CO₂ &mdash; carbon dioxide</li>
-      <li><span class="swatch m-h2o"></span>H₂O &mdash; water</li>
-      <li><span class="swatch m-o2"></span>O₂ &mdash; oxygen</li>
+      <li><span class="swatch m-co2"></span>CO₂ - carbon dioxide</li>
+      <li><span class="swatch m-h2o"></span>H₂O - water</li>
+      <li><span class="swatch m-o2"></span>O₂ - oxygen</li>
       <li><span class="swatch m-photon"></span>light (a photon)</li>
-      <li><span class="swatch m-electron"></span>e⁻ &mdash; electron</li>
-      <li><span class="swatch m-atp"></span>ATP &mdash; energy</li>
-      <li><span class="swatch m-nadph"></span>NADPH &mdash; electrons + H</li>
-      <li><span class="swatch m-sugar"></span>sugar &mdash; glucose</li>
+      <li><span class="swatch m-electron"></span>e⁻ - electron</li>
+      <li><span class="swatch m-atp"></span>ATP - energy</li>
+      <li><span class="swatch m-nadph"></span>NADPH - electrons + H</li>
+      <li><span class="swatch m-sugar"></span>sugar - glucose</li>
     </ul>
   </div>
 </nav>
@@ -58,7 +58,7 @@
   <div class="hero-inner">
     <div class="hero-eyebrow">An immersive, running molecular world</div>
     <h1 class="hero-title">Solidified Sky</h1>
-    <p class="hero-sub">A tree is made of <em>air</em>. Fly down from a leaf into a living chloroplast and travel <em>through</em> photosynthesis while it runs &mdash; photons streaming in, water splitting, electrons hopping, the sugar factory turning. Every molecule here is drawn and animated in code.</p>
+    <p class="hero-sub">A tree is made of <em>air</em>. Fly down from a leaf into a living chloroplast and travel <em>through</em> photosynthesis while it runs - photons streaming in, water splitting, electrons hopping, the sugar factory turning. Every molecule here is drawn and animated in code.</p>
     <div class="hero-equation" id="hero-equation" aria-label="six carbon dioxide plus six water plus light yields glucose plus six oxygen"></div>
     <a href="#s0" class="hero-cta">Begin the descent ↓</a>
   </div>
@@ -67,7 +67,7 @@
 
 <article>
 
-<!-- ==================== STATION 0 — A TREE IS MADE OF AIR ==================== -->
+<!-- ==================== STATION 0 - A TREE IS MADE OF AIR ==================== -->
 <section class="station" id="s0" data-station="0">
   <div class="station-head">
     <div class="eyebrow">Station 00 · The hook</div>
@@ -76,7 +76,7 @@
 
   <p>Here is a fact that should be more famous than it is. A giant oak weighs many tonnes, and almost none of that weight came out of the ground. Dig up the soil under a full-grown tree and weigh it: barely anything is missing. So where did all that <strong>wood</strong> come from?</p>
 
-  <p>It came, mostly, from thin air. Every year a tree pulls <span class="m-co2">carbon dioxide</span> gas out of the sky and quietly rebuilds those carbon atoms into trunk, branch, and leaf. The physicist Richard <span class="gloss" data-title="Feynman's &ldquo;a tree is made of air&rdquo;" data-body="In a 1983 BBC interview (Fun to Imagine), Richard Feynman marveled that the substance of a tree comes not from the soil but from the carbon dioxide in the air - the carbon is pulled from the sky and the oxygen breathed back out." data-link="https://www.youtube.com/watch?v=ITpDrdtGAmo" data-linktext="Feynman — Fun to Imagine (BBC)">Feynman</span> loved this: the tree is, in a real sense, <em>solidified sky</em>. Drag the guess below and see how wrong the intuition of &ldquo;plants eat soil&rdquo; really is.</p>
+  <p>It came, mostly, from thin air. Every year a tree pulls <span class="m-co2">carbon dioxide</span> gas out of the sky and quietly rebuilds those carbon atoms into trunk, branch, and leaf. The physicist Richard <span class="gloss" data-title="Feynman's &ldquo;a tree is made of air&rdquo;" data-body="In a 1983 BBC interview (Fun to Imagine), Richard Feynman marveled that the substance of a tree comes not from the soil but from the carbon dioxide in the air - the carbon is pulled from the sky and the oxygen breathed back out." data-link="https://www.youtube.com/watch?v=ITpDrdtGAmo" data-linktext="Feynman - Fun to Imagine (BBC)">Feynman</span> loved this: the tree is, in a real sense, <em>solidified sky</em>. Drag the guess below and see how wrong the intuition of &ldquo;plants eat soil&rdquo; really is.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive</div>
@@ -87,7 +87,7 @@
     </div>
     <div class="interactive-controls">
       <div class="control-group">
-        <span class="control-label">Your guess &mdash; mass from soil <span class="control-value" id="s0-soil-val">70%</span></span>
+        <span class="control-label">Your guess - mass from soil <span class="control-value" id="s0-soil-val">70%</span></span>
         <input type="range" id="s0-soil" min="0" max="100" value="70" step="1">
       </div>
       <div class="control-group row">
@@ -99,20 +99,20 @@
 
   <div class="callout insight">
     <div class="callout-label">The willow experiment · van Helmont, ~1648</div>
-    <p>Jan Baptist van Helmont grew a willow in a weighed pot of soil, adding only water for five years. The tree gained about <strong>74 kg</strong>. The soil lost only about <strong>60 grams</strong>. He concluded the mass came from water. He was mostly right that it was not soil &mdash; but the true source is the <span class="m-co2">CO₂</span> in the air, with water supplying the hydrogen. Carbon from the sky, built into wood.</p>
+    <p>Jan Baptist van Helmont grew a willow in a weighed pot of soil, adding only water for five years. The tree gained about <strong>74 kg</strong>. The soil lost only about <strong>60 grams</strong>. He concluded the mass came from water. He was mostly right that it was not soil - but the true source is the <span class="m-co2">CO₂</span> in the air, with water supplying the hydrogen. Carbon from the sky, built into wood.</p>
   </div>
 </section>
 
-<!-- ==================== STATION 1 — ZOOM INTO A LEAF ==================== -->
+<!-- ==================== STATION 1 - ZOOM INTO A LEAF ==================== -->
 <section class="station" id="s1" data-station="1">
   <div class="station-head">
     <div class="eyebrow">Station 01 · Changing scale</div>
     <h2><span class="section-number">01</span>Zoom Into a Leaf</h2>
   </div>
 
-  <p>To see how the sky gets turned into sugar, we have to go small &mdash; smaller than seems reasonable. A leaf is a thin, flat solar panel. Slide the zoom below and fall through its layers: the whole tree, then one leaf, then the spongy green tissue inside called the <span class="gloss" data-title="Mesophyll" data-body="The green middle tissue of a leaf. The upper palisade layer is packed with tall cells doing most of the photosynthesis; the lower spongy layer has air gaps that let gases diffuse in and out through the stomata." data-link="https://en.wikipedia.org/wiki/Leaf#Mesophyll" data-linktext="Wikipedia: leaf mesophyll">mesophyll</span>, then a single living cell.</p>
+  <p>To see how the sky gets turned into sugar, we have to go small - smaller than seems reasonable. A leaf is a thin, flat solar panel. Slide the zoom below and fall through its layers: the whole tree, then one leaf, then the spongy green tissue inside called the <span class="gloss" data-title="Mesophyll" data-body="The green middle tissue of a leaf. The upper palisade layer is packed with tall cells doing most of the photosynthesis; the lower spongy layer has air gaps that let gases diffuse in and out through the stomata." data-link="https://en.wikipedia.org/wiki/Leaf#Mesophyll" data-linktext="Wikipedia: leaf mesophyll">mesophyll</span>, then a single living cell.</p>
 
-  <p>Notice the pores on the underside &mdash; the <span class="gloss" data-title="Stomata" data-body="Tiny adjustable mouths on a leaf's surface, each framed by two guard cells that swell to open the pore and slacken to close it. CO₂ comes in through them; O₂ and water vapor go out. Plants trade water loss against carbon gain by opening and closing them." data-link="https://en.wikipedia.org/wiki/Stoma" data-linktext="Wikipedia: stoma">stomata</span>. These are adjustable mouths. <span class="m-co2">Carbon dioxide</span> drifts in through them; <span class="m-o2">oxygen</span> and water vapor drift out. Inside each cell, once we get there, we will find dozens of tiny green machines. Those are our destination.</p>
+  <p>Notice the pores on the underside - the <span class="gloss" data-title="Stomata" data-body="Tiny adjustable mouths on a leaf's surface, each framed by two guard cells that swell to open the pore and slacken to close it. CO₂ comes in through them; O₂ and water vapor go out. Plants trade water loss against carbon gain by opening and closing them." data-link="https://en.wikipedia.org/wiki/Stoma" data-linktext="Wikipedia: stoma">stomata</span>. These are adjustable mouths. <span class="m-co2">Carbon dioxide</span> drifts in through them; <span class="m-o2">oxygen</span> and water vapor drift out. Inside each cell, once we get there, we will find dozens of tiny green machines. Those are our destination.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive</div>
@@ -131,7 +131,7 @@
   </div>
 </section>
 
-<!-- ==================== STATION 2 — MEET THE CHLOROPLAST ==================== -->
+<!-- ==================== STATION 2 - MEET THE CHLOROPLAST ==================== -->
 <section class="station" id="s2" data-station="2">
   <div class="station-head">
     <div class="eyebrow">Station 02 · The green machine</div>
@@ -140,7 +140,7 @@
 
   <p>This is a <span class="gloss" data-title="Chloroplast" data-body="The organelle where photosynthesis happens, about 5 micrometres across - you could line up a couple of hundred across the width of a human hair. A single leaf cell holds ten to a hundred of them. They were once free-living cyanobacteria, swallowed and kept, which is why they carry their own DNA." data-link="https://en.wikipedia.org/wiki/Chloroplast" data-linktext="Wikipedia: chloroplast">chloroplast</span>, and it is where the whole story happens. It is a green lozenge about five micrometres long, and a single leaf cell packs in dozens of them. Click any part to learn its name, or press <em>Take the tour</em> to be walked through.</p>
 
-  <p>Two regions matter. The <strong>thylakoids</strong> are flat green sacs stacked like coins into piles called <span class="gloss" data-title="Grana" data-body="Stacks of thylakoid discs inside a chloroplast (one stack is a granum). Their membranes hold the chlorophyll and the machinery of the light reactions. Stacking packs in more light-catching surface." data-link="https://en.wikipedia.org/wiki/Thylakoid#Granum" data-linktext="Wikipedia: thylakoid / granum">grana</span> &mdash; this is where sunlight is caught. Around them is the <strong>stroma</strong>, the fluid filling the rest of the chloroplast &mdash; this is where sugar gets built. Two rooms, two jobs. We will visit both.</p>
+  <p>Two regions matter. The <strong>thylakoids</strong> are flat green sacs stacked like coins into piles called <span class="gloss" data-title="Grana" data-body="Stacks of thylakoid discs inside a chloroplast (one stack is a granum). Their membranes hold the chlorophyll and the machinery of the light reactions. Stacking packs in more light-catching surface." data-link="https://en.wikipedia.org/wiki/Thylakoid#Granum" data-linktext="Wikipedia: thylakoid / granum">grana</span> - this is where sunlight is caught. Around them is the <strong>stroma</strong>, the fluid filling the rest of the chloroplast - this is where sugar gets built. Two rooms, two jobs. We will visit both.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive</div>
@@ -159,10 +159,10 @@
   </div>
 </section>
 
-<!-- ==================== STATION 3 — THE LIGHT REACTIONS ==================== -->
+<!-- ==================== STATION 3 - THE LIGHT REACTIONS ==================== -->
 <section class="station" id="s3" data-station="3">
   <div class="station-head">
-    <div class="eyebrow">Station 03 · Room one — the thylakoid</div>
+    <div class="eyebrow">Station 03 · Room one - the thylakoid</div>
     <h2><span class="section-number">03</span>The Light Reactions</h2>
   </div>
 
@@ -175,7 +175,7 @@
     <p>The <span class="m-o2">O₂</span> you breathe comes from <strong>splitting water</strong>, not from CO₂. Ruben and Kamen proved it in 1941 by labelling water's oxygen with a heavy isotope and watching that exact oxygen come out as gas. Never say &ldquo;CO₂ is split to release oxygen.&rdquo; The carbon of CO₂ goes into sugar; the oxygen of O₂ came from water.</p>
   </div>
 
-  <p>Turn up the sun and the whole scene speeds up: more photon strikes, faster electron hops, more <span class="m-o2">oxygen</span> bubbling off, the battery meters climbing quicker. Turn it to night and everything stops &mdash; no light, no reaction. Notice what is <em>not</em> here yet: no sugar. The light reactions only make energy carriers. Sugar is built next door.</p>
+  <p>Turn up the sun and the whole scene speeds up: more photon strikes, faster electron hops, more <span class="m-o2">oxygen</span> bubbling off, the battery meters climbing quicker. Turn it to night and everything stops - no light, no reaction. Notice what is <em>not</em> here yet: no sugar. The light reactions only make energy carriers. Sugar is built next door.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive · live simulation</div>
@@ -205,16 +205,16 @@
   </div>
 </section>
 
-<!-- ==================== STATION 4 — FOLLOW ONE CARBON ATOM ==================== -->
+<!-- ==================== STATION 4 - FOLLOW ONE CARBON ATOM ==================== -->
 <section class="station" id="s4" data-station="4">
   <div class="station-head">
-    <div class="eyebrow">Station 04 · Room two — the stroma</div>
+    <div class="eyebrow">Station 04 · Room two - the stroma</div>
     <h2><span class="section-number">04</span>Follow One Carbon Atom</h2>
   </div>
 
   <p>Now the payoff. Step out of the thylakoid into the surrounding <strong>stroma</strong>, where the <span class="gloss" data-title="Calvin cycle" data-body="The sugar-building stage, named for Melvin Calvin. It runs in the stroma and does not directly need light - but it depends completely on the ATP and NADPH the light reactions make, so it stops in the dark. Call it the Calvin cycle, never the &lsquo;dark reactions.&rsquo;" data-link="https://en.wikipedia.org/wiki/Calvin_cycle" data-linktext="Wikipedia: Calvin cycle">Calvin cycle</span> spends the <span class="m-atp">ATP</span> and <span class="m-nadph">NADPH</span> from next door to build sugar out of air. Rather than describe it, let us <em>ride</em> it. Press the button and we will grab a single <span class="m-co2">CO₂</span> molecule from outside the leaf and follow one of its carbon atoms all the way into a sugar.</p>
 
-  <p>The atom's path: in through a stoma, into the stroma, and onto a five-carbon molecule by the enzyme <span class="gloss" data-title="Rubisco" data-body="The enzyme that grabs CO₂ from the air and attaches it to a sugar skeleton - the first step of building food. It is the most abundant protein on Earth, and also famously slow and sloppy: it sometimes grabs O₂ by mistake. That flaw is why some plants evolved the C4 and CAM workarounds." data-link="https://en.wikipedia.org/wiki/RuBisCO" data-linktext="Wikipedia: RuBisCO">rubisco</span> &mdash; the most abundant protein on Earth. That splits into two three-carbon pieces, which the energy carriers convert into a sugar called <span class="m-sugar">G3P</span>. Most G3P stays in the cycle to keep it turning; a fraction escapes, and after six carbons have been captured, the escapees join into one <span class="m-sugar">glucose</span>. Six turns of the wheel, one sugar. Keep your eye on the bright atom.</p>
+  <p>The atom's path: in through a stoma, into the stroma, and onto a five-carbon molecule by the enzyme <span class="gloss" data-title="Rubisco" data-body="The enzyme that grabs CO₂ from the air and attaches it to a sugar skeleton - the first step of building food. It is the most abundant protein on Earth, and also famously slow and sloppy: it sometimes grabs O₂ by mistake. That flaw is why some plants evolved the C4 and CAM workarounds." data-link="https://en.wikipedia.org/wiki/RuBisCO" data-linktext="Wikipedia: RuBisCO">rubisco</span> - the most abundant protein on Earth. That splits into two three-carbon pieces, which the energy carriers convert into a sugar called <span class="m-sugar">G3P</span>. Most G3P stays in the cycle to keep it turning; a fraction escapes, and after six carbons have been captured, the escapees join into one <span class="m-sugar">glucose</span>. Six turns of the wheel, one sugar. Keep your eye on the bright atom.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive · the signature ride</div>
@@ -237,7 +237,7 @@
   </div>
 </section>
 
-<!-- ==================== STATION 5 — THE WHOLE CYCLE, RUNNING ==================== -->
+<!-- ==================== STATION 5 - THE WHOLE CYCLE, RUNNING ==================== -->
 <section class="station" id="s5" data-station="5">
   <div class="station-head">
     <div class="eyebrow">Station 05 · Day and night</div>
@@ -246,7 +246,7 @@
 
   <p>Pull all the way back to the whole leaf and let a day pass. Turn the dial from dawn to noon to dusk to midnight and watch both counters. In daylight the leaf is a net producer: it takes in <span class="m-co2">CO₂</span> and breathes out <span class="m-o2">O₂</span> far faster than it burns any. That is photosynthesis winning.</p>
 
-  <p>But here is the correction to a myth almost everyone carries: plants <strong>respire around the clock</strong>, just like you. They are always burning a little sugar for their own energy, taking in O₂ and giving off CO₂. During the day photosynthesis vastly outruns that, so the net flow is CO₂ in, O₂ out. At night, with no light, only respiration remains &mdash; and the leaf quietly breathes the other way. Watch the counters slow, halt, and reverse as you turn toward midnight.</p>
+  <p>But here is the correction to a myth almost everyone carries: plants <strong>respire around the clock</strong>, just like you. They are always burning a little sugar for their own energy, taking in O₂ and giving off CO₂. During the day photosynthesis vastly outruns that, so the net flow is CO₂ in, O₂ out. At night, with no light, only respiration remains - and the leaf quietly breathes the other way. Watch the counters slow, halt, and reverse as you turn toward midnight.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive</div>
@@ -270,18 +270,18 @@
 
   <div class="callout definition">
     <div class="callout-label">Two more myths, quickly</div>
-    <p><strong>&ldquo;Dark reactions happen at night.&rdquo;</strong> No &mdash; the Calvin cycle needs the ATP and NADPH the light makes, so it runs in daylight and stalls at night. <strong>&ldquo;Photosynthesis only happens in leaves.&rdquo;</strong> It happens anywhere there are chloroplasts, including green stems and unripe fruit.</p>
+    <p><strong>&ldquo;Dark reactions happen at night.&rdquo;</strong> No - the Calvin cycle needs the ATP and NADPH the light makes, so it runs in daylight and stalls at night. <strong>&ldquo;Photosynthesis only happens in leaves.&rdquo;</strong> It happens anywhere there are chloroplasts, including green stems and unripe fruit.</p>
   </div>
 </section>
 
-<!-- ==================== STATION 6 — WHY GREEN? ==================== -->
+<!-- ==================== STATION 6 - WHY GREEN? ==================== -->
 <section class="station" id="s6" data-station="6">
   <div class="station-head">
     <div class="eyebrow">Station 06 · Bonus</div>
     <h2><span class="section-number">06</span>Why Green?</h2>
   </div>
 
-  <p>One loose end. If chlorophyll lives on sunlight, why does it throw away the green? Sunlight is a mix of every visible color. Chlorophyll grabs blue light hard (around 430&nbsp;nm) and red light hard (around 660&nbsp;nm), but it barely absorbs the green in the middle &mdash; so green light bounces off the leaf and into your eye. A leaf looks green because green is the color it <em>refuses</em> to eat. Drag the wavelength slider across the spectrum and watch the leaf darken where chlorophyll drinks and brighten where it reflects.</p>
+  <p>One loose end. If chlorophyll lives on sunlight, why does it throw away the green? Sunlight is a mix of every visible color. Chlorophyll grabs blue light hard (around 430&nbsp;nm) and red light hard (around 660&nbsp;nm), but it barely absorbs the green in the middle - so green light bounces off the leaf and into your eye. A leaf looks green because green is the color it <em>refuses</em> to eat. Drag the wavelength slider across the spectrum and watch the leaf darken where chlorophyll drinks and brighten where it reflects.</p>
 
   <div class="interactive wide">
     <div class="interactive-label">Interactive</div>
@@ -296,7 +296,7 @@
         <input type="range" id="s6-wavelength" min="400" max="700" value="550" step="1" style="width:100%;">
       </div>
     </div>
-    <div class="interactive-readout" id="s6-readout">550 nm — green. Chlorophyll reflects this band, so it reaches your eye.</div>
+    <div class="interactive-readout" id="s6-readout">550 nm - green. Chlorophyll reflects this band, so it reaches your eye.</div>
   </div>
 
   <details class="collapsible">
@@ -309,15 +309,15 @@
 
   <div class="callout insight">
     <div class="callout-label">Where your next breath came from</div>
-    <p>Nearly every oxygen molecule you have ever breathed was split off a water molecule by chlorophyll, somewhere, at some time. Ancient cyanobacteria running this exact reaction filled the sky with oxygen over two billion years ago &mdash; the <span class="gloss" data-title="Great Oxidation Event" data-body="Around 2.4 billion years ago, photosynthesizing cyanobacteria had pumped out so much oxygen that Earth's atmosphere changed permanently. It rusted the oceans, wiped out much of the oxygen-hating life of the time, and set the stage for animals. All of it from the water-splitting step you watched in Station 03." data-link="https://en.wikipedia.org/wiki/Great_Oxidation_Event" data-linktext="Wikipedia: Great Oxidation Event">Great Oxidation Event</span>. Every forest is still, quietly, turning sky into wood and water into breath.</p>
+    <p>Nearly every oxygen molecule you have ever breathed was split off a water molecule by chlorophyll, somewhere, at some time. Ancient cyanobacteria running this exact reaction filled the sky with oxygen over two billion years ago - the <span class="gloss" data-title="Great Oxidation Event" data-body="Around 2.4 billion years ago, photosynthesizing cyanobacteria had pumped out so much oxygen that Earth's atmosphere changed permanently. It rusted the oceans, wiped out much of the oxygen-hating life of the time, and set the stage for animals. All of it from the water-splitting step you watched in Station 03." data-link="https://en.wikipedia.org/wiki/Great_Oxidation_Event" data-linktext="Wikipedia: Great Oxidation Event">Great Oxidation Event</span>. Every forest is still, quietly, turning sky into wood and water into breath.</p>
   </div>
 </section>
 
 </article>
 
 <footer class="site-footer">
-  <p>Built by <a href="https://maninae.github.io/">Owen Wang</a> &mdash; a science explainer in the spirit of <a href="https://maninae.github.io/valence/">Valence</a>. All art drawn in code (Canvas + SVG), no images. Science checked against Khan Academy, OpenStax Biology 2e, and Campbell Biology.</p>
-  <p style="margin-top:8px;">Solidified Sky &mdash; the phrase is Nick Lane's, by way of Feynman: a tree is made of air.</p>
+  <p>Built by <a href="https://maninae.github.io/">Owen Wang</a> - a science explainer in the spirit of <a href="https://maninae.github.io/valence/">Valence</a>. All art drawn in code (Canvas + SVG), no images. Science checked against Khan Academy, OpenStax Biology 2e, and Campbell Biology.</p>
+  <p style="margin-top:8px;">Solidified Sky - the phrase is Nick Lane's, by way of Feynman: a tree is made of air.</p>
 </footer>
 
 </main>

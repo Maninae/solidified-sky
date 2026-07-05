@@ -1,11 +1,11 @@
-/* s3-light.js — Station 3, "The Light Reactions": a running simulation of the
+/* s3-light.js - Station 3, "The Light Reactions": a running simulation of the
    light-dependent reactions in the thylakoid membrane.
 
    Left→right in the membrane: PSII, ETC (cytochrome), PSI, ATP synthase.
    Stroma above, lumen below. Photons stream from the sun and drive:
      1. water enters PSII from the lumen and splits (2 H₂O → O₂ + 4 H⁺ + 4 e⁻)
         - O₂ bubbles UP and away (this is where the O₂ we breathe comes from,
-          NOT from CO₂ — the whole site rests on this fact)
+          NOT from CO₂ - the whole site rests on this fact)
         - H⁺ dumps into the lumen
         - electrons hop PSII → ETC → PSI along the membrane
      2. ETC pumps additional H⁺ from stroma into lumen as electrons pass
@@ -14,7 +14,7 @@
      4. ATP synthase (a real rotary turbine) lets H⁺ flow lumen → stroma,
         producing ATP into the stroma; the rotor visibly spins.
    Sunlight slider scales every rate + sun brightness; Night freezes everything.
-   No sugar is made here — that's the next station (Calvin cycle). */
+   No sugar is made here - that's the next station (Calvin cycle). */
 
 import { COLORS } from '../tokens.js';
 import { mountStage } from '../engine.js';
@@ -201,13 +201,13 @@ export function init(sectionEl) {
     function drawRegions(ctx, L) {
       const memTop = L.membraneY - L.membraneH / 2;
       const memBot = L.membraneY + L.membraneH / 2;
-      // Stroma above — subtle green wash.
+      // Stroma above - subtle green wash.
       const sg = ctx.createLinearGradient(0, 0, 0, memTop);
       sg.addColorStop(0, 'rgba(30, 66, 44, 0.55)');
       sg.addColorStop(1, 'rgba(20, 46, 30, 0.18)');
       ctx.fillStyle = sg;
       ctx.fillRect(0, 0, L.W, memTop);
-      // Lumen below — cooler wash so the H⁺ pool reads.
+      // Lumen below - cooler wash so the H⁺ pool reads.
       const lg = ctx.createLinearGradient(0, memBot, 0, L.H);
       lg.addColorStop(0, 'rgba(70, 55, 100, 0.18)');
       lg.addColorStop(1, 'rgba(70, 55, 100, 0.42)');
@@ -272,14 +272,14 @@ export function init(sectionEl) {
       ctx.save();
       const memTop = L.membraneY - L.membraneH / 2;
       const memBot = L.membraneY + L.membraneH / 2;
-      // Region labels — corners so they never collide with the scene.
+      // Region labels - corners so they never collide with the scene.
       ctx.font = '600 11px system-ui, -apple-system, sans-serif';
       ctx.fillStyle = 'rgba(180, 220, 190, 0.60)';
       ctx.textAlign = 'left';
       ctx.fillText('STROMA', 18, 22);
       ctx.textAlign = 'right';
       ctx.fillText('LUMEN  ·  H⁺ pool', L.W - 18, L.H - 14);
-      // Complex labels — alternate above / below the membrane so 4 labels fit.
+      // Complex labels - alternate above / below the membrane so 4 labels fit.
       ctx.textAlign = 'center';
       ctx.font = '600 12px system-ui, sans-serif';
       ctx.fillStyle = 'rgba(232, 242, 234, 0.92)';

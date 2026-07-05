@@ -1,4 +1,4 @@
-/* tokens.js — the single source of truth for color and molecule identity in JS.
+/* tokens.js - the single source of truth for color and molecule identity in JS.
    Mirrors styles/base.css :root. If you change a color, change it in BOTH.
 
    THE MOLECULE COLOR LAW: every species has one fixed color, used wherever it
@@ -34,7 +34,7 @@ export const COLORS = {
   ruleStrong: "rgba(150, 200, 170, 0.26)",
 };
 
-/* MOLECULES — canonical schematic spec for each species the primitive library
+/* MOLECULES - canonical schematic spec for each species the primitive library
    draws. `atoms` is a list of {dx, dy, r, color} offsets (in "molecule units",
    roughly pixels at scale 1) describing the ball-and-stick schematic. `glow`
    is the additive halo color. Renderers in primitives.js consume this so a
@@ -66,7 +66,7 @@ export const MOLECULES = {
       { dx: 3.5,  dy: 0, r: 4.4, color: COLORS.o2 },
     ],
   },
-  // ATP: an energy token — draw as a bright yellow rounded burst (see primitives).
+  // ATP: an energy token - draw as a bright yellow rounded burst (see primitives).
   atp:   { label: "ATP",   color: COLORS.atp,   glow: COLORS.atp,   r: 7, shape: "burst" },
   // NADPH: violet carrier token.
   nadph: { label: "NADPH", color: COLORS.nadph, glow: COLORS.nadph, r: 7, shape: "capsule" },
@@ -80,7 +80,7 @@ export const MOLECULES = {
   electron:{ label: "e⁻", color: COLORS.electron, glow: COLORS.electron, r: 3.5, shape: "dot" },
   // proton H+: tiny pale-pink dot.
   proton:{ label: "H⁺", color: COLORS.proton, glow: COLORS.proton, r: 2.6, shape: "dot" },
-  // a single carbon atom (for the "follow one carbon" ride) — bright, tagged.
+  // a single carbon atom (for the "follow one carbon" ride) - bright, tagged.
   carbon:{ label: "C", color: "#ffffff", glow: COLORS.accent2, r: 4.5, shape: "tagged" },
 };
 
@@ -99,7 +99,7 @@ export const EQUATION = [
 
 /* Absorption spectrum for chlorophyll a+b (station 6). Relative absorbance
    0..1 sampled every 10nm, 400..700nm. Two peaks (~430 blue, ~662 red),
-   a deep trough in the green (~550) — the band leaves reflect, why leaves
+   a deep trough in the green (~550) - the band leaves reflect, why leaves
    look green. Values are a smooth schematic of the real a+b curve. */
 export const CHLOROPHYLL_ABSORPTION = [
   // 400  410  420  430  440  450  460  470  480  490

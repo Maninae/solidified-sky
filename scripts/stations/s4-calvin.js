@@ -1,4 +1,4 @@
-/* s4-calvin.js — the signature ride: "Follow One Carbon Atom."
+/* s4-calvin.js - the signature ride: "Follow One Carbon Atom."
 
    Idle: the Calvin cycle turns as a labeled wheel in the stroma
    (RuBP → 3-PGA → G3P → regenerate). Rubisco sits by the RuBP node.
@@ -159,7 +159,7 @@ function advanceRide(state, paths, readout, dt) {
   const p = paths[state.phaseIdx](state.phaseT);
   state.atomWorld.x = p[0]; state.atomWorld.y = p[1];
 
-  // Trail crumbs — skip while the atom is stationary (the 'turn' phase).
+  // Trail crumbs - skip while the atom is stationary (the 'turn' phase).
   if (phase.key !== 'turn') {
     const last = state.trail[state.trail.length - 1];
     if (!last || Math.hypot(p[0] - last.x, p[1] - last.y) > 5) {
@@ -231,7 +231,7 @@ function drawIdleWorld(ctx, W, H, state, particles, _fade, camX = 0, camY = 0) {
   drawCarrierSlot(ctx, ATP_SLOT,   'ATP',   COLORS.atp);
   drawCarrierSlot(ctx, NADPH_SLOT, 'NADPH', COLORS.nadph);
 
-  // Glucose only appears once the atom is on the exit leg — the reveal is
+  // Glucose only appears once the atom is on the exit leg - the reveal is
   // part of the payoff.
   if (state.phaseIdx >= 6 || state.done) {
     drawMolecule(ctx, 'glucose', GLUCOSE_POS.x, GLUCOSE_POS.y, { scale: 1.3, glow: true });
@@ -262,7 +262,7 @@ function drawWheelRing(ctx, theta) {
   ctx.strokeStyle = 'rgba(150, 200, 170, 0.28)';
   ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(0, 0, WHEEL.r, 0, Math.PI * 2); ctx.stroke();
-  // A dashed ring whose dash offset rotates — the wheel is always turning.
+  // A dashed ring whose dash offset rotates - the wheel is always turning.
   ctx.strokeStyle = COLORS.chloro;
   ctx.lineWidth = 2;
   ctx.setLineDash([14, 12]);

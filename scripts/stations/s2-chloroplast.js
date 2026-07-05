@@ -1,4 +1,4 @@
-/* stations/s2-chloroplast.js — Station 2: "Meet the Chloroplast".
+/* stations/s2-chloroplast.js - Station 2: "Meet the Chloroplast".
  *
  * A large code-drawn chloroplast the reader can take apart. 2.5D parallax on
  * mousemove (envelope holds still, grana slide most; touch devices auto-sway);
@@ -28,9 +28,9 @@ const PARTS = {
   envelope: { title: 'Outer envelope',
               body:  'A double membrane wraps the whole chloroplast in and out.' },
   grana:    { title: 'Thylakoids · grana',
-              body:  'Flat green sacs stacked into piles — the light reactions run here.' },
+              body:  'Flat green sacs stacked into piles - the light reactions run here.' },
   stroma:   { title: 'Stroma',
-              body:  'The fluid around the thylakoids — where the Calvin cycle builds sugar.' },
+              body:  'The fluid around the thylakoids - where the Calvin cycle builds sugar.' },
 };
 
 const TOUR_ORDER   = ['envelope', 'grana', 'stroma'];
@@ -43,7 +43,7 @@ export function init(sectionEl) {
   catch (err) {
     console.error('[s2-chloroplast] init failed:', err);
     const readout = sectionEl.querySelector('#s2-readout');
-    if (readout) readout.textContent = 'Static view — the chloroplast is still labeled below.';
+    if (readout) readout.textContent = 'Static view - the chloroplast is still labeled below.';
   }
 }
 
@@ -93,7 +93,7 @@ function mount(sectionEl) {
   const render = (ctx, dt, t, W, H) => {
     if (W !== state.W || H !== state.H) layout(W, H);
 
-    // Parallax targeting — mouse when hovering, gentle sway on touch, still on reduced-motion.
+    // Parallax targeting - mouse when hovering, gentle sway on touch, still on reduced-motion.
     if (!REDUCED_MOTION && IS_TOUCH) {
       state.parallax.tx = 0.35 * Math.sin(t * 0.35);
       state.parallax.ty = 0.22 * Math.sin(t * 0.5 + 1.1);
@@ -112,7 +112,7 @@ function mount(sectionEl) {
     drawStroma(ctx, 0, 0, { w: state.a * 1.85, h: state.b * 1.85, seed: 3 });
     ctx.restore();
 
-    // 2. Drifting H₂O / CO₂ — top the pool up each frame (bounded, never spins).
+    // 2. Drifting H₂O / CO₂ - top the pool up each frame (bounded, never spins).
     for (let n = particles.count; n < N_DRIFTERS; n++) spawnDrifter();
     if (!REDUCED_MOTION) particles.update(dt);
     ctx.save();
@@ -121,7 +121,7 @@ function mount(sectionEl) {
     particles.draw(ctx);
     ctx.restore();
 
-    // 3. Grana — synchronized glow pulse.
+    // 3. Grana - synchronized glow pulse.
     const pulse = REDUCED_MOTION ? 1 : 0.75 + 0.25 * Math.sin(t * 1.6);
     for (let i = 0; i < state.granaXY.length; i++) {
       const [gx, gy] = state.granaXY[i];
@@ -132,7 +132,7 @@ function mount(sectionEl) {
       ctx.restore();
     }
 
-    // 4. Envelope — radial wash + double stroke.
+    // 4. Envelope - radial wash + double stroke.
     drawEnvelope(ctx, state.cx + px * OFF.env, state.cy + py * OFF.env, state.a, state.b);
 
     // 5. Advance the tour, then spotlight-dim if one is active.
@@ -210,7 +210,7 @@ function inSuperellipse(x, y, a, b, n = N_ENVELOPE) {
   return Math.pow(Math.abs(x)/a, n) + Math.pow(Math.abs(y)/b, n) <= 1;
 }
 
-/* Which part the click hit — grana first (small circles), then envelope rim
+/* Which part the click hit - grana first (small circles), then envelope rim
  * band, then stroma interior. Each layer's parallax offset is subtracted so
  * hotspots track the visible art. */
 function hitTest(state, px, py) {

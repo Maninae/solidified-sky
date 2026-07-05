@@ -1,4 +1,4 @@
-/* engine.js — Stage: one canvas, a DPR-correct backing store, a rAF loop with
+/* engine.js - Stage: one canvas, a DPR-correct backing store, a rAF loop with
    a delta-time cap, and IntersectionObserver-driven pause when off-screen.
 
    The render function runs in CSS pixels (the context is already scaled for
@@ -117,7 +117,7 @@ export class Stage {
   }
 }
 
-/* mountStage — a Stage that only wakes when the canvas is on-screen.
+/* mountStage - a Stage that only wakes when the canvas is on-screen.
    Uses IntersectionObserver so animations don't burn CPU off-screen; still
    respects prefers-reduced-motion (paints one static frame per visibility). */
 export function mountStage(canvas, render, opts = {}) {

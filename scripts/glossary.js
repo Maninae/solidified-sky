@@ -1,4 +1,4 @@
-/* glossary.js — click-to-open .gloss popups.
+/* glossary.js - click-to-open .gloss popups.
 
    Each .gloss term carries: data-title, data-body, data-link, data-linktext.
    We render an absolutely-positioned .gloss-pop (styled in base.css) near the
@@ -13,7 +13,7 @@ export function initGlossary(root = document) {
   const terms = root.querySelectorAll('.gloss');
   for (const t of terms) wireTerm(t);
 
-  // Global close handlers — installed once, but idempotent-safe if this fn
+  // Global close handlers - installed once, but idempotent-safe if this fn
   // is called again with a different subtree (rewires just the new terms).
   if (!initGlossary._installed) {
     document.addEventListener('click', onDocClick, true);

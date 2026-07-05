@@ -1,13 +1,13 @@
-/* particles.js — a pooled, data-oriented particle engine.
+/* particles.js - a pooled, data-oriented particle engine.
 
    Every species has ONE cached sprite (rendered once with drawMolecule at
    construct time onto an offscreen canvas at devicePixelRatio). The frame
-   loop only does drawImage — 10–100× faster than re-drawing shapes each
-   frame — so 800+ molecules can move at 60fps.
+   loop only does drawImage - 10–100× faster than re-drawing shapes each
+   frame - so 800+ molecules can move at 60fps.
 
    Particles come in two flavors:
-     * free   — integrated with velocity + drag until their life runs out.
-     * path   — ride a parametric curve (t)=>[x,y] over `duration` seconds,
+     * free   - integrated with velocity + drag until their life runs out.
+     * path   - ride a parametric curve (t)=>[x,y] over `duration` seconds,
                 then die (and optionally fire onArrive).
 
    All data lives in parallel typed arrays so update() is one tight loop with

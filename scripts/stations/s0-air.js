@@ -1,4 +1,4 @@
-/* s0-air.js — Station 00: "A Tree Is Made of Air."
+/* s0-air.js - Station 00: "A Tree Is Made of Air."
 
    Purpose
      Overturn the everyday intuition that "plants eat soil." A tree's dry mass
@@ -153,7 +153,7 @@ function drawTreeScene(ctx, s, t, state) {
 
   const baseH = Math.min(260, Math.max(180, s.h * 0.72));
   // Slow, capped growth as CO₂ arrives. Ramps 0 → +6 % over the first ~60
-  // arrivals, then holds — so the tree visibly gains a little mass from air.
+  // arrivals, then holds - so the tree visibly gains a little mass from air.
   const growth = Math.min(1, state.arrivals / 60);
   const H = baseH * (1 + 0.06 * growth);
   const tx = s.x + Math.round(s.w * 0.42);
@@ -191,7 +191,7 @@ function drawTreeScene(ctx, s, t, state) {
 
 /* Paced CO₂ spawner: sky-edge start point → gentle Bezier arc → crown target. */
 function spawnCO2(s, state, particles, dt) {
-  if (dt <= 0) return;   // static frame — don't churn the pool
+  if (dt <= 0) return;   // static frame - don't churn the pool
   state.spawnAcc += dt;
   const groundY = s.y + Math.round(s.h * 0.78);
   const H = Math.min(260, Math.max(180, s.h * 0.72));
@@ -203,7 +203,7 @@ function spawnCO2(s, state, particles, dt) {
 
     const edge = Math.random();
     let sx, sy;
-    if (edge < 0.55) {                     // top edge — most CO₂ falls from above
+    if (edge < 0.55) {                     // top edge - most CO₂ falls from above
       sx = s.x + 20 + Math.random() * (s.w - 40);
       sy = s.y + 8 + Math.random() * 36;
     } else if (edge < 0.8) {               // right edge
@@ -300,7 +300,7 @@ function drawChart(ctx, c, state) {
   drawSegLabel(ctx, labelX, combinedMidY, COLORS.accent,
     'Air + water', pctText(airPct), preA);
 
-  // Soil label — nudge downward if the sliver is too thin for its mid to sit
+  // Soil label - nudge downward if the sliver is too thin for its mid to sit
   // clearly below the other labels.
   const soilMidYRaw = barTop + hCarb + hWatr + hSoil / 2;
   const soilMidY = Math.max(soilMidYRaw, watrMidY + 22);
@@ -349,7 +349,7 @@ function mixHex(a, b, t) {
   return `rgb(${r}, ${g}, ${bl})`;
 }
 
-/* Readout copy — plain, declarative, no rhetorical questions. */
+/* Readout copy - plain, declarative, no rhetorical questions. */
 
 function guessBlurb(pct) {
   if (pct >= 60) return `You're guessing ${pct}% of the mass came out of the ground. Most people guess that high. Press reveal.`;

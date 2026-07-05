@@ -1,4 +1,4 @@
-/* stations/s1-zoom.js — Station 1: Zoom Into a Leaf.
+/* stations/s1-zoom.js - Station 1: Zoom Into a Leaf.
 
    One continuous descent through six orders of magnitude - tree, leaf,
    layered tissue, one mesophyll cell packed with chloroplasts. Slider drives
@@ -84,7 +84,7 @@ export function init(sectionEl) {
     };
     updateReadout();
 
-    /* CO₂/O₂ flow spawner — only fires while scenes 3-4 are on-screen. */
+    /* CO₂/O₂ flow spawner - only fires while scenes 3-4 are on-screen. */
     let flowClock = 0;
     const trySpawnFlow = (dt, W, H, weights) => {
       if (reducedMotion) return;
@@ -306,7 +306,7 @@ function spawnCrossFlow(system, W, H) {
   const stomaL = cx - W * 0.20;
   const stomaY = cy + Math.min(H * 0.30, 130);
 
-  // CO2 IN — up from outside, through the right stoma, into the leaf.
+  // CO2 IN - up from outside, through the right stoma, into the leaf.
   system.spawnOnPath('co2', bezierPath(
     [stomaR + rand(-40, 40), stomaY + 90],
     [stomaR + rand(-24, 24), stomaY + 30],
@@ -314,7 +314,7 @@ function spawnCrossFlow(system, W, H) {
     [stomaR + rand(-90, 90), stomaY - 100],
   ), { duration: 3.4, jitter: 4, scale: 0.7 });
 
-  // O2 OUT — reverse, escaping through the left stoma.
+  // O2 OUT - reverse, escaping through the left stoma.
   system.spawnOnPath('o2', bezierPath(
     [stomaL + rand(-90, 90), stomaY - 100],
     [stomaL + rand(-18, 18), stomaY - 20],

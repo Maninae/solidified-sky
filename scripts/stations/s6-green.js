@@ -1,4 +1,4 @@
-/* s6-green.js — Station 6: "Why Green?"
+/* s6-green.js - Station 6: "Why Green?"
    The bonus station of Solidified Sky. A leaf looks green because green is
    the band chlorophyll REFUSES to absorb: it drinks blue (~430) and red
    (~660) hard, and the ~550 gap in the curve is what reflects into your eye.
@@ -35,9 +35,9 @@ function bandName(nm) {
 function readoutFor(nm, absorbed) {
   const band = bandName(nm);
   const pct = Math.round(absorbed * 100);
-  if (absorbed > 0.75) return `${nm} nm — ${band}. Chlorophyll drinks about ${pct}% of this — it drives photosynthesis, and almost none escapes to your eye.`;
-  if (absorbed < 0.25) return `${nm} nm — ${band}. Chlorophyll barely touches this (only ~${pct}%). Most of it reflects off the leaf — this is the color you see.`;
-  return `${nm} nm — ${band}. Chlorophyll absorbs about ${pct}% here — the rest reflects.`;
+  if (absorbed > 0.75) return `${nm} nm - ${band}. Chlorophyll drinks about ${pct}% of this - it drives photosynthesis, and almost none escapes to your eye.`;
+  if (absorbed < 0.25) return `${nm} nm - ${band}. Chlorophyll barely touches this (only ~${pct}%). Most of it reflects off the leaf - this is the color you see.`;
+  return `${nm} nm - ${band}. Chlorophyll absorbs about ${pct}% here - the rest reflects.`;
 }
 
 export function init(sectionEl) {
@@ -118,7 +118,7 @@ function drawLeafPanel(ctx, box, state) {
   ctx.fillStyle = baseFill;
   ctx.fill(leafPath);
   ctx.shadowBlur = 0;
-  // Midrib — sells it as a leaf, not a pea.
+  // Midrib - sells it as a leaf, not a pea.
   ctx.strokeStyle = 'rgba(0,0,0,0.28)';
   ctx.lineWidth = 1.4;
   ctx.beginPath();
@@ -230,7 +230,7 @@ function drawSpectrumPanel(ctx, box, state) {
   ctx.lineWidth = 1.6;
   ctx.stroke();
 
-  // Peak / trough labels — pinned above the chart so they never touch the curve.
+  // Peak / trough labels - pinned above the chart so they never touch the curve.
   const marks = [
     { nm: 430, label: 'blue peak', align: 'left'   },
     { nm: 550, label: 'green gap', align: 'center' },
@@ -280,7 +280,7 @@ function drawSpectrumPanel(ctx, box, state) {
   ctx.lineWidth = 1.2;
   ctx.stroke();
 
-  // Axis text lives in the gutters — no chance of curve overlap.
+  // Axis text lives in the gutters - no chance of curve overlap.
   ctx.fillStyle = COLORS.textMuted;
   ctx.font = '10px "JetBrains Mono", ui-monospace, monospace';
   ctx.textAlign = 'center';

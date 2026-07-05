@@ -1,4 +1,4 @@
-/* s5-daynight.js — Station 5: The Whole Cycle, Running.
+/* s5-daynight.js - Station 5: The Whole Cycle, Running.
  *
  * A single leaf across one full day. The slider drives clock time (0..1440
  * min); sky, sun/moon arc, gas flow through the stomata, and the three
@@ -8,13 +8,13 @@
  *   Photosynthesis only runs on sunlight, a bell peaking at noon, zero at
  *   night. Day: photo >> resp, so NET flow is CO2 in / O2 out. Night: only
  *   resp is left, so the flow REVERSES to O2 in / CO2 out. Around dawn/dusk
- *   they roughly cancel — the compensation point.
+ *   they roughly cancel - the compensation point.
  *
  * Model: photo(f) = sin(pi * dayPhase) in [SUNRISE,SUNSET] else 0;  resp
  * constant. netO2 = photo - resp;  netCO2 = -netO2.
  *
  * Interface: export function init(sectionEl). Safe if a control is missing
- * or a renderer throws — the panel survives.
+ * or a renderer throws - the panel survives.
  */
 
 import { COLORS } from '../tokens.js';
@@ -92,12 +92,12 @@ function fmtClock(minutes) {
 const fmtSigned = (x) => (x >= 0 ? '+' : '') + x.toFixed(2);
 function statusFor(f) {
   const photo = photoRate(f);
-  if (photo <= 0.02) return 'night — respiring only';
-  if (photo > RESP_RATE + 0.14) return 'daytime — net producing';
-  return f < 0.5 ? 'dawn — near balance' : 'dusk — near balance';
+  if (photo <= 0.02) return 'night - respiring only';
+  if (photo > RESP_RATE + 0.14) return 'daytime - net producing';
+  return f < 0.5 ? 'dawn - near balance' : 'dusk - near balance';
 }
 
-// Deterministic star field — cheap hash on index so the set survives resize.
+// Deterministic star field - cheap hash on index so the set survives resize.
 function buildStars(W, groundY, n = 80) {
   const stars = new Array(n);
   const h = (i, k) => { const v = Math.sin((i + 1) * k) * 43758.5453; return v - Math.floor(v); };
