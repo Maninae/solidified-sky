@@ -54,7 +54,13 @@ styles/base.css         tokens + molecule color law + reusable components (fixed
 styles/stations.css     page shell: sidebar, hero, station rhythm, responsive (fixed)
 scripts/
   tokens.js             COLORS, MOLECULES, EQUATION, spectrum data, helpers (fixed contract)
-  primitives.js         the draw* library - organic shapes + every molecule/organelle
+  util.js               shared stateless helpers: lerp, clamp, smoothstep, mixHex,
+                        roundRect, hexToRgb, lighten, darken, withAlpha, prefersReducedMotion
+  primitives.js         barrel: re-exports everything from primitives/* (import from here)
+  primitives/
+    shapes.js           organic-shape helpers: blobPath, superellipsePath, roundedLeafPath
+    organelles.js       drawChloroplast/Thylakoid*/Stroma/Stoma/LeafCell/CrossSection/Tree/Sun
+    molecules.js        drawMolecule dispatch + per-species drawers
   particles.js          pooled Float32Array particle engine + Bézier path flows + sprite atlas
   engine.js             Stage: DPR canvas sizing, rAF loop w/ dt cap, IntersectionObserver wake
   glossary.js           click-to-open .gloss popups (reads data-* attrs)
@@ -65,9 +71,11 @@ scripts/
 ```
 
 Dependencies flow one way: `station module → engine + particles + primitives →
-tokens`. Each module ≤ ~300 lines, one responsibility. State lives in the
-station's controller closure/object; primitive & particle functions are
-stateless (receive ctx + args).
+util + tokens`. Each module ≤ ~400 lines, one responsibility. State lives in
+the station's controller closure/object; primitive, particle & util functions
+are stateless (receive ctx + args). Colors come only from `tokens.js`;
+translucent variants go through `withAlpha(COLORS.x, a)` from `util.js` so the
+Molecule Color Law stays the single source of truth.
 
 ---
 
