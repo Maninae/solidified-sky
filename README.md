@@ -1,6 +1,6 @@
 # Solidified Sky
 
-**A tree is made of air.** An immersive, always-running explainer that flies you down from a leaf into a living chloroplast and carries you *through* photosynthesis while it happens — photons streaming in, water splitting, electrons hopping, the Calvin cycle turning. Every molecule is **drawn and animated in code** (Canvas 2D + SVG). No images, no AI-generated art.
+**A tree is made of air.** An immersive, always-running explainer that flies you down from a leaf into a living chloroplast and carries you *through* photosynthesis while it happens — photons streaming in, water splitting, electrons hopping, the Calvin cycle turning. **Every molecule, organelle, and diagram is drawn and animated in code** (Canvas 2D + SVG) — no raster art in the interactives, so everything stays accurate, animatable, and cohesive. (The only bitmaps are a subtle atmospheric backdrop behind the hero and the social share image.)
 
 **Live:** [maninae.github.io/solidified-sky](https://maninae.github.io/solidified-sky) · Science sibling to [Valence](https://maninae.github.io/valence/).
 
