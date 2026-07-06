@@ -409,7 +409,18 @@ article { max-width: var(--content-max); margin: 0 auto; }
   overflow: hidden;
   margin: 0 -48px;
 }
-.hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+/* A photographic atmosphere layer sits FAR behind the code-drawn molecules to
+   add organic depth code can't cheaply fake. Heavily darkened + masked so the
+   glowing molecules and title stay the focus; the site's art is still all code. */
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: url(../assets/hero-atmosphere.jpg) center/cover no-repeat;
+  opacity: 0.55;
+  filter: brightness(0.7) saturate(1.05);
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at center, transparent 18%, #000 85%);
+          mask-image: radial-gradient(ellipse 75% 70% at center, transparent 18%, #000 85%);
+}
+.hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
 .hero-inner {
   position: relative;
   z-index: 1;
