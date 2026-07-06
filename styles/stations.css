@@ -492,7 +492,7 @@ article { max-width: var(--content-max); margin: 0 auto; }
 /* ---------- stations ---------- */
 
 .station { padding: 78px 0 20px; scroll-margin-top: 12px; }
-.station-head { margin-bottom: 10px; }
+.station-head { margin-bottom: 18px; }
 .eyebrow {
   font-family: var(--mono);
   font-size: 12px;
@@ -518,6 +518,19 @@ article { max-width: var(--content-max); margin: 0 auto; }
   margin-right: 14px;
   vertical-align: 0.3em;
 }
+/* The headlining question, promoted directly under each station title - the
+   first thing the eye lands on, before any mechanism. See CLAUDE.md voice. */
+.station-question {
+  font-family: var(--display);
+  font-size: clamp(21px, 2.5vw, 28px);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  max-width: 36ch;
+  margin: 16px 0 0;
+}
+.station-question em { font-style: italic; }
 
 /* ---------- responsive ---------- */
 

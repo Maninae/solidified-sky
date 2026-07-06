@@ -19,8 +19,19 @@ Bright kids ~9-13 (middle-school leaning), engaging for curious adults too.
 - **Accuracy is the whole point.** The #1 rule: **O₂ comes from splitting
   water, never from CO₂.** The carbon of CO₂ goes into sugar. Never violate this.
 - Narrative but lean, like Valence: cause-and-effect prose, every "therefore"
-  earns its "because." No hook questions ("Ever wondered...?"). Declarative
-  openers. Spaced hyphens " - " in prose, never em-dashes.
+  earns its "because." Spaced hyphens " - " in prose, never em-dashes.
+- **Every station opens curiosity-first, before any mechanism.** Lead with two
+  short eyebrow'd beats: `The question` (the genuine, sharp thing a reader would
+  wonder about this domain) then `Why it's wild` (why they should care - the
+  stakes, the counterintuitive twist). Only then the deeper "how it works"
+  chunks. Without those two beats a reader's eyes glaze in ~5 seconds; the
+  mechanism has not earned their attention yet. Station 0 is the model.
+- A genuine question the station immediately answers is good ("But *where* does
+  that happen?"). The ban is only on the cheesy tease ("Ever wondered...?") that
+  never pays off.
+- Keep chunks short: 1-3 lines each, one idea per paragraph. Humans read one
+  line at a time with small working memory, so hand them the prior before each
+  fact and let them drop each beat as they pass it.
 - Less telling, more seeing: the interactives are the spine, prose is connective
   tissue. If a paragraph could be a manipulable thing, it should be.
 

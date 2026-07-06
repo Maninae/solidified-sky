@@ -32,13 +32,13 @@
   <a href="#top" class="sidebar-title">Solidified Sky</a>
   <div class="sidebar-eyebrow">Photosynthesis · drawn in code</div>
   <ol class="toc" id="toc">
-    <li><a href="#s0" data-target="s0"><span class="toc-n">00</span> A Tree Is Made of Air</a></li>
-    <li><a href="#s1" data-target="s1"><span class="toc-n">01</span> Zoom Into a Leaf</a></li>
-    <li><a href="#s2" data-target="s2"><span class="toc-n">02</span> Meet the Chloroplast</a></li>
-    <li><a href="#s3" data-target="s3"><span class="toc-n">03</span> The Light Reactions</a></li>
-    <li><a href="#s4" data-target="s4"><span class="toc-n">04</span> Follow One Carbon Atom</a></li>
-    <li><a href="#s5" data-target="s5"><span class="toc-n">05</span> The Whole Cycle, Running</a></li>
-    <li><a href="#s6" data-target="s6"><span class="toc-n">06</span> Why Green?</a></li>
+    <li><a href="#s0-a-tree-is-made-of-air" data-target="s0-a-tree-is-made-of-air"><span class="toc-n">00</span> A Tree Is Made of Air</a></li>
+    <li><a href="#s1-zoom-into-a-leaf" data-target="s1-zoom-into-a-leaf"><span class="toc-n">01</span> Zoom Into a Leaf</a></li>
+    <li><a href="#s2-meet-the-chloroplast" data-target="s2-meet-the-chloroplast"><span class="toc-n">02</span> Meet the Chloroplast</a></li>
+    <li><a href="#s3-the-light-reactions" data-target="s3-the-light-reactions"><span class="toc-n">03</span> The Light Reactions</a></li>
+    <li><a href="#s4-follow-one-carbon-atom" data-target="s4-follow-one-carbon-atom"><span class="toc-n">04</span> Follow One Carbon Atom</a></li>
+    <li><a href="#s5-the-whole-cycle-running" data-target="s5-the-whole-cycle-running"><span class="toc-n">05</span> The Whole Cycle, Running</a></li>
+    <li><a href="#s6-why-green" data-target="s6-why-green"><span class="toc-n">06</span> Why Green?</a></li>
   </ol>
   <div class="sidebar-foot">
     <div class="legend-title">Molecule legend</div>
@@ -70,7 +70,7 @@
     <h1 class="hero-title">Solidified Sky</h1>
     <p class="hero-sub">A tree is made of <em>air</em>. Fly down from a leaf into a living chloroplast and travel <em>through</em> photosynthesis while it runs - photons streaming in, water splitting, electrons hopping, the sugar factory turning. Every molecule here is drawn and animated in code.</p>
     <div class="hero-equation" id="hero-equation" aria-label="six carbon dioxide plus six water plus light yields glucose plus six oxygen"></div>
-    <a href="#s0" class="hero-cta">Begin the descent ↓</a>
+    <a href="#s0-a-tree-is-made-of-air" class="hero-cta">Begin the descent ↓</a>
   </div>
   <div class="hero-scroll-hint">scroll to travel</div>
 </header>
@@ -78,17 +78,18 @@
 <article>
 
 <!-- ==================== STATION 0 - A TREE IS MADE OF AIR ==================== -->
-<section class="station" id="s0" data-station="0">
+<section class="station" id="s0-a-tree-is-made-of-air" data-station="0">
   <div class="station-head">
     <div class="eyebrow">Station 00 · The hook</div>
     <h2><span class="section-number">00</span>A Tree Is Made of Air</h2>
+    <p class="station-question">A tree weighs many tons. So where did all that weight come from?</p>
   </div>
 
   <div class="spread text-wide">
     <div class="spread-text">
       <div class="chunk">
         <span class="chunk-eyebrow">The intuition</span>
-        <p>A giant oak weighs many tonnes, and almost none of that weight came out of the ground. Dig up the soil under a full-grown tree and weigh it - barely anything is missing.</p>
+        <p>A giant oak weighs many tons, and almost none of that weight came out of the ground. Dig up the soil under a full-grown tree and weigh it - barely anything is missing.</p>
       </div>
       <div class="chunk">
         <span class="chunk-eyebrow">The answer</span>
@@ -123,27 +124,39 @@
         <button class="btn primary" id="s0-reveal">Reveal the experiment</button>
       </div>
     </div>
-    <div class="interactive-readout" id="s0-readout">Most people guess the mass comes from the ground. Van Helmont thought so too, in 1648.</div>
+    <div class="interactive-readout" id="s0-readout">Most people guess a tree's mass comes from the ground. Set your guess, then reveal the willow experiment.</div>
   </div>
 
   <div class="callout insight">
     <div class="callout-label">The willow experiment · <span class="gloss" data-title="Jan Baptist van Helmont" data-body="A 17th-century Flemish physician and chemist (1580 - 1644), one of the first people to design a controlled plant-mass experiment. He grew a willow in a weighed pot of soil for five years, adding only water, and weighed everything at the end. His conclusion (that the wood was made from water) turned out to be half-right: he was correct that it wasn't soil - but the real source is the CO₂ in the air, with water supplying the hydrogen." data-link="https://en.wikipedia.org/wiki/Jan_Baptist_van_Helmont" data-linktext="Wikipedia: van Helmont">van Helmont</span>, ~1648</div>
-    <p>Van Helmont grew a willow in a weighed pot of soil, adding only water for five years. The tree gained about <strong>74 kg</strong>. The soil lost only about <strong>60 grams</strong>. He concluded the mass came from water - he was mostly right that it wasn't soil, but the true source is the <span class="m-co2">CO₂</span> in the air, with water supplying the hydrogen. Carbon from the sky, built into wood.</p>
+    <p>In the 1600s, a Flemish doctor named van Helmont wanted to know what a growing plant is actually made of.</p>
+    <p>The obvious guess was the soil. A plant sits in dirt and gets bigger, so surely it eats the ground.</p>
+    <p>So he built a sealed test. He dried a pot of soil, weighed it exactly, and planted a small willow - about <strong>2.3 kg</strong>.</p>
+    <p>For five years he added nothing but water, and kept the pot covered so no stray dust could drift in and skew the weight.</p>
+    <p>Then he weighed it all again. The willow had gained about <strong>74 kg</strong>. The soil had lost only about <strong>60 grams</strong>.</p>
+    <p>If the tree had eaten the soil, the soil should have lost 74 kg too. It barely moved - so the mass came from somewhere else.</p>
+    <p>Van Helmont said water. He was half right: it wasn't the soil, but the real source is the <span class="m-co2">CO₂</span> in the air, with water supplying only the hydrogen.</p>
+    <p>Carbon from the sky, built into wood.</p>
   </div>
 </section>
 
 <!-- ==================== STATION 1 - ZOOM INTO A LEAF ==================== -->
-<section class="station" id="s1" data-station="1">
+<section class="station" id="s1-zoom-into-a-leaf" data-station="1">
   <div class="station-head">
     <div class="eyebrow">Station 01 · Changing scale</div>
     <h2><span class="section-number">01</span>Zoom Into a Leaf</h2>
+    <p class="station-question">A tree is built out of thin air. But <em>where</em> does that actually happen?</p>
   </div>
 
   <div class="spread">
     <div class="spread-text">
       <div class="chunk">
+        <span class="chunk-eyebrow">Why it's wild</span>
+        <p>Not in the trunk, not in the roots. It happens inside machines so small that a single leaf holds billions of them - and almost every meal you have ever eaten traces back to one.</p>
+      </div>
+      <div class="chunk">
         <span class="chunk-eyebrow">Going small</span>
-        <p>To see how the sky gets turned into sugar, we have to go small. A leaf is a thin, flat solar panel. Slide the zoom below and fall through its layers - the whole tree, then one leaf, then the spongy green tissue inside called the <span class="gloss" data-title="Mesophyll" data-body="The green middle tissue of a leaf. The upper palisade layer is packed with tall cells doing most of the photosynthesis; the lower spongy layer has air gaps that let gases diffuse in and out through the stomata." data-link="https://en.wikipedia.org/wiki/Leaf#Mesophyll" data-linktext="Wikipedia: leaf mesophyll">mesophyll</span>, then a single living cell.</p>
+        <p>So let's shrink down and go find one. A leaf is a thin, flat solar panel. Slide the zoom below and fall through its layers - the whole tree, then one leaf, then the spongy green tissue inside called the <span class="gloss" data-title="Mesophyll" data-body="The green middle tissue of a leaf. The upper palisade layer is packed with tall cells doing most of the photosynthesis; the lower spongy layer has air gaps that let gases diffuse in and out through the stomata." data-link="https://en.wikipedia.org/wiki/Leaf#Mesophyll" data-linktext="Wikipedia: leaf mesophyll">mesophyll</span>, then a single living cell.</p>
       </div>
       <div class="chunk">
         <span class="chunk-eyebrow">The mouths</span>
@@ -153,7 +166,7 @@
     <div class="spread-figure">
       <div class="callout definition">
         <div class="callout-label">Scales you will pass</div>
-        <p>Tree - a few metres. Leaf - a few centimetres. Mesophyll cell - about 30 micrometres. Chloroplast - about 5 micrometres. Every step down, ×100 or so.</p>
+        <p>Tree - a few meters. Leaf - a few centimeters. Mesophyll cell - about 30 micrometers. Chloroplast - about 5 micrometers. Every step down, ×100 or so.</p>
       </div>
     </div>
   </div>
@@ -171,22 +184,27 @@
         <input type="range" id="s1-zoom" min="0" max="1000" value="0" step="1" style="width:100%;">
       </div>
     </div>
-    <div class="interactive-readout" id="s1-readout">Scale: a whole tree, a few metres tall.</div>
+    <div class="interactive-readout" id="s1-readout">Scale: a whole tree, a few meters tall.</div>
   </div>
 </section>
 
 <!-- ==================== STATION 2 - MEET THE CHLOROPLAST ==================== -->
-<section class="station" id="s2" data-station="2">
+<section class="station" id="s2-meet-the-chloroplast" data-station="2">
   <div class="station-head">
     <div class="eyebrow">Station 02 · The green machine</div>
     <h2><span class="section-number">02</span>Meet the Chloroplast</h2>
+    <p class="station-question">We keep calling it "the machine." What does it actually look like inside?</p>
   </div>
 
   <div class="spread text-wide">
     <div class="spread-text">
       <div class="chunk">
+        <span class="chunk-eyebrow">Why it's wild</span>
+        <p>The chloroplast was not always part of the plant. It began as a free-living bacterium that got swallowed whole - and never left. Every leaf you have seen runs on captured solar factories with their own ancient machinery.</p>
+      </div>
+      <div class="chunk">
         <span class="chunk-eyebrow">The organelle</span>
-        <p>This is a <strong>chloroplast</strong>, and it is where the whole story happens. A green lozenge about five micrometres long. A single leaf cell packs in dozens of them.</p>
+        <p>This is a <strong>chloroplast</strong>, and it is where the whole story happens. A green lozenge about five micrometers long. A single leaf cell packs in dozens of them.</p>
       </div>
       <div class="chunk">
         <span class="chunk-eyebrow">Two rooms, two jobs</span>
@@ -259,14 +277,19 @@
 </section>
 
 <!-- ==================== STATION 3 - THE LIGHT REACTIONS ==================== -->
-<section class="station" id="s3" data-station="3">
+<section class="station" id="s3-the-light-reactions" data-station="3">
   <div class="station-head">
     <div class="eyebrow">Station 03 · Room one - the thylakoid</div>
     <h2><span class="section-number">03</span>The Light Reactions</h2>
+    <p class="station-question">How do you turn <em>light</em> - no weight, nothing to hold - into something a plant can actually use?</p>
   </div>
 
   <div class="spread text-wide">
     <div class="spread-text">
+      <div class="chunk">
+        <span class="chunk-eyebrow">Why it's wild</span>
+        <p>This is the step that catches sunlight and tears water apart. The <span class="m-o2">oxygen</span> in the breath you just took was made right here, in a leaf, not long ago.</p>
+      </div>
       <div class="chunk">
         <span class="chunk-eyebrow">The spark</span>
         <p>Press into the wall of a thylakoid and the machinery comes alive. Sunlight arrives as <span class="m-photon">photons</span>. Green pigment molecules called <span class="gloss" data-title="Chlorophyll" data-body="The green pigment that catches light. It absorbs blue and red strongly and reflects green, which is why leaves look green. When a photon hits, it kicks an electron up to a higher energy - that excited electron is where all the energy of life enters the living world." data-link="https://en.wikipedia.org/wiki/Chlorophyll" data-linktext="Wikipedia: chlorophyll">chlorophyll</span> catch them, and each catch kicks an <span class="m-electron">electron</span> up to a high energy.</p>
@@ -300,7 +323,7 @@
 
   <div class="callout warn">
     <div class="callout-label">The one thing most diagrams get wrong</div>
-    <p>The <span class="m-o2">O₂</span> you breathe comes from <strong>splitting water</strong>, not from CO₂. Ruben and Kamen proved it in 1941 by labelling water's oxygen with a heavy isotope and watching that exact oxygen come out as gas. Never say &ldquo;CO₂ is split to release oxygen.&rdquo; The carbon of CO₂ goes into sugar; the oxygen of O₂ came from water.</p>
+    <p>The <span class="m-o2">O₂</span> you breathe comes from <strong>splitting water</strong>, not from CO₂. Ruben and Kamen proved it in 1941 by labeling water's oxygen with a heavy isotope and watching that exact oxygen come out as gas. Never say &ldquo;CO₂ is split to release oxygen.&rdquo; The carbon of CO₂ goes into sugar; the oxygen of O₂ came from water.</p>
   </div>
 
   <div class="spread center">
@@ -355,14 +378,19 @@
 </section>
 
 <!-- ==================== STATION 4 - FOLLOW ONE CARBON ATOM ==================== -->
-<section class="station" id="s4" data-station="4">
+<section class="station" id="s4-follow-one-carbon-atom" data-station="4">
   <div class="station-head">
     <div class="eyebrow">Station 04 · Room two - the stroma</div>
     <h2><span class="section-number">04</span>Follow One Carbon Atom</h2>
+    <p class="station-question"><span class="m-co2">CO₂</span> is an invisible gas. How does it become something solid you can hold - wood, sugar, a whole leaf?</p>
   </div>
 
   <div class="spread text-wide">
     <div class="spread-text">
+      <div class="chunk">
+        <span class="chunk-eyebrow">Why it's wild</span>
+        <p>This is the exact moment air turns into matter, one carbon atom at a time. The "solidified sky" the whole site is named for happens right here.</p>
+      </div>
       <div class="chunk">
         <span class="chunk-eyebrow">The payoff</span>
         <p>Step out of the thylakoid into the surrounding <strong>stroma</strong>. This is where the <span class="gloss" data-title="Calvin cycle" data-body="The sugar-building stage, named for Melvin Calvin. It runs in the stroma and does not directly need light - but it depends completely on the ATP and NADPH the light reactions make, so it stops in the dark. Call it the Calvin cycle, never the &lsquo;dark reactions.&rsquo;" data-link="https://en.wikipedia.org/wiki/Calvin_cycle" data-linktext="Wikipedia: Calvin cycle">Calvin cycle</span> spends the <span class="m-atp">ATP</span> and <span class="m-nadph">NADPH</span> from next door to build sugar out of air.</p>
@@ -425,14 +453,19 @@
 </section>
 
 <!-- ==================== STATION 5 - THE WHOLE CYCLE, RUNNING ==================== -->
-<section class="station" id="s5" data-station="5">
+<section class="station" id="s5-the-whole-cycle-running" data-station="5">
   <div class="station-head">
     <div class="eyebrow">Station 05 · Day and night</div>
     <h2><span class="section-number">05</span>The Whole Cycle, Running</h2>
+    <p class="station-question">Everyone knows plants give off oxygen. But do they ever use it up - and what happens after dark?</p>
   </div>
 
   <div class="spread text-wide">
     <div class="spread-text">
+      <div class="chunk">
+        <span class="chunk-eyebrow">Why it's wild</span>
+        <p>Plants breathe around the clock, exactly like you do. Whether a leaf adds oxygen to the air or takes it back flips between day and night - and most people get this backwards.</p>
+      </div>
       <div class="chunk">
         <span class="chunk-eyebrow">Zoom out</span>
         <p>Pull all the way back to the whole leaf and let a day pass. Turn the dial from dawn to noon to dusk to midnight and watch both counters.</p>
@@ -494,17 +527,18 @@
 </section>
 
 <!-- ==================== STATION 6 - WHY GREEN? ==================== -->
-<section class="station" id="s6" data-station="6">
+<section class="station" id="s6-why-green" data-station="6">
   <div class="station-head">
     <div class="eyebrow">Station 06 · Bonus</div>
     <h2><span class="section-number">06</span>Why Green?</h2>
+    <p class="station-question">A leaf lives on sunlight. So why throw away the green - the color sitting right in the middle of the rainbow?</p>
   </div>
 
   <div class="spread text-wide">
     <div class="spread-text">
       <div class="chunk">
-        <span class="chunk-eyebrow">The refused color</span>
-        <p>One loose end: chlorophyll lives on sunlight, yet throws away the green.</p>
+        <span class="chunk-eyebrow">Why it's wild</span>
+        <p>The green of every tree, plant, and blade of grass is the one color a leaf <em>refuses</em> to eat. All that green you see is rejected light.</p>
       </div>
       <div class="chunk">
         <span class="chunk-eyebrow">The answer</span>

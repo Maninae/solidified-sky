@@ -94,7 +94,7 @@ function mount(sectionEl) {
       if (state.revealed) return;
       state.revealed = true;
       state.revealT = 0;
-      if (readout) readout.textContent = revealBlurb();
+      if (readout) readout.innerHTML = revealBlurb();
       revealBt.disabled = true;
       revealBt.textContent = 'Revealed';
     });
@@ -376,6 +376,10 @@ function guessBlurb(pct) {
   return `${pct}% from soil? Bold. See what van Helmont's willow experiment actually found.`;
 }
 
+// Rendered as innerHTML (see the reveal handler) so the beats break onto
+// their own lines - short chunks read far easier than one dense block.
 function revealBlurb() {
-  return `Van Helmont grew a willow for five years, adding only water. It gained about ${VH_TREE_KG} kg; the soil lost only about ${VH_SOIL_GRAMS} g. But the real source is the air: about ${TRUTH_CARBON}% of a tree's dry mass is carbon and another ~${TRUTH_OXYGEN}% is oxygen - and BOTH are pulled from CO₂ in the air, not the ground. Only ~${TRUTH_HYDROGEN}% (the hydrogen) comes from water, and ~${TRUTH_SOIL}% from soil minerals. Over ${TRUTH_AIR}% of a tree is, atom by atom, assembled out of thin air.`;
+  return `The bars are the atoms in dry wood. About ${TRUTH_CARBON}% is carbon and ~${TRUTH_OXYGEN}% is oxygen - both pulled from CO₂ in the air, not the ground.<br><br>` +
+         `Only ~${TRUTH_HYDROGEN}% (the hydrogen) comes from water, and ~${TRUTH_SOIL}% from soil minerals.<br><br>` +
+         `Over ${TRUTH_AIR}% of a tree is built, atom by atom, out of thin air.`;
 }

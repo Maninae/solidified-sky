@@ -17,9 +17,17 @@ import { init as initS4 } from './stations/s4-calvin.js';
 import { init as initS5 } from './stations/s5-daynight.js';
 import { init as initS6 } from './stations/s6-green.js';
 
+/* Keyed by each section's slug id (the readable URL anchor, e.g.
+   #s4-follow-one-carbon-atom). Must stay in sync with the section ids in
+   index.html - the scrollspy and lazy-mount both look sections up by id. */
 const STATIONS = {
-  s0: initS0, s1: initS1, s2: initS2, s3: initS3,
-  s4: initS4, s5: initS5, s6: initS6,
+  's0-a-tree-is-made-of-air': initS0,
+  's1-zoom-into-a-leaf': initS1,
+  's2-meet-the-chloroplast': initS2,
+  's3-the-light-reactions': initS3,
+  's4-follow-one-carbon-atom': initS4,
+  's5-the-whole-cycle-running': initS5,
+  's6-why-green': initS6,
 };
 
 /* ---------- hero equation (colored per the Molecule Color Law) ---------- */

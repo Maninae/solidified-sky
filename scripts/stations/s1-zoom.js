@@ -27,7 +27,7 @@ const REDUCED_MOTION = prefersReducedMotion();
 /* Four semantic-zoom scenes. name → slider label; size + read → readout. */
 const SCENES = [
   { key: 'tree',  name: 'whole tree',      size: '~5-10 m',
-    read: 'A whole tree - a few metres of wood, twig, and leaf.' },
+    read: 'A whole tree - a few meters of wood, twig, and leaf.' },
   { key: 'leaf',  name: 'one leaf',        size: '~10 cm',
     read: 'A single leaf - a flat solar panel, veins delivering water.' },
   { key: 'cross', name: 'inside the leaf', size: '~0.3 mm thick',
@@ -270,7 +270,7 @@ function drawCellScene(ctx, W, H, d, alpha) {
 
 const LABELS = {
   tree: [
-    { fx: 0,     fy:  0.42, text: 'a tree - ~5-10 metres tall' },
+    { fx: 0,     fy:  0.42, text: 'a tree - ~5-10 meters tall' },
   ],
   leaf: [
     { fx: 0,     fy: -0.38, text: 'one leaf - ~10 cm across' },
