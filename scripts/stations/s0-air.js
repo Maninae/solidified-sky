@@ -35,7 +35,7 @@ import { lerp, mixHex, withAlpha, lighten } from '../util.js';
 
 // --- The pedagogical truth --------------------------------------------------
 // Rough percentages of a tree's DRY mass. Standard plant-biochem values:
-// ~45–50 % C, ~42–45 % O, ~6 % H, ~2–5 % mineral ash. We collapse O + H (both
+// ~45-50 % C, ~42-45 % O, ~6 % H, ~2-5 % mineral ash. We collapse O + H (both
 // sourced from water) and round to a clean 47 / 50 / 3 that adds to 100.
 // Where a tree's DRY mass actually comes from (standard textbook model).
 // The key correction: the OXYGEN in wood comes from CO₂, not water - water's
@@ -377,5 +377,5 @@ function guessBlurb(pct) {
 }
 
 function revealBlurb() {
-  return `Van Helmont grew a willow for five years, adding only water. It gained about ${VH_TREE_KG} kg; the soil lost only about ${VH_SOIL_GRAMS} g. Here is the staggering part: about ${TRUTH_CARBON}% of a tree's dry mass is carbon and another ~${TRUTH_OXYGEN}% is oxygen - and BOTH are pulled from CO₂ in the air, not the ground. Only ~${TRUTH_HYDROGEN}% (the hydrogen) comes from water, and ~${TRUTH_SOIL}% from soil minerals. Over ${TRUTH_AIR}% of a tree is, atom by atom, assembled out of thin air.`;
+  return `Van Helmont grew a willow for five years, adding only water. It gained about ${VH_TREE_KG} kg; the soil lost only about ${VH_SOIL_GRAMS} g. But the real source is the air: about ${TRUTH_CARBON}% of a tree's dry mass is carbon and another ~${TRUTH_OXYGEN}% is oxygen - and BOTH are pulled from CO₂ in the air, not the ground. Only ~${TRUTH_HYDROGEN}% (the hydrogen) comes from water, and ~${TRUTH_SOIL}% from soil minerals. Over ${TRUTH_AIR}% of a tree is, atom by atom, assembled out of thin air.`;
 }
