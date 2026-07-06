@@ -2,7 +2,7 @@
 
    Every species has ONE cached sprite (rendered once with drawMolecule at
    construct time onto an offscreen canvas at devicePixelRatio). The frame
-   loop only does drawImage - 10–100× faster than re-drawing shapes each
+   loop only does drawImage - 10-100× faster than re-drawing shapes each
    frame - so 800+ molecules can move at 60fps.
 
    Particles come in two flavors:

@@ -48,7 +48,7 @@ function moonArc(f) {
 }
 
 // Smooth 0..1 ambient light: 0 at midnight, 1 at midday, with soft twilight
-// transitions (0.20–0.30 dawn, 0.70–0.80 dusk). Drives the star alpha.
+// transitions (0.20-0.30 dawn, 0.70-0.80 dusk). Drives the star alpha.
 // smoothstep is hoisted to util.js and uses the GLSL (edge0, edge1, x) order.
 const ambientLight = (f) => Math.max(0, smoothstep(0.20, 0.30, f) - smoothstep(0.70, 0.80, f));
 

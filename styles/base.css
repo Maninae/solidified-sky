@@ -1,18 +1,18 @@
-/* Solidified Sky — base stylesheet.
-   Design system: "living cell in the dark" — a dark forest-green depth where
+/* Solidified Sky - base stylesheet.
+   Design system: "living cell in the dark" - a dark forest-green depth where
    photons, electrons and molecules glow. Sibling to Valence's dark-lab look.
 
    ALL theming via :root custom properties. Never hardcode a color in a rule.
 
-   THE MOLECULE COLOR LAW (the single most important rule on the site — this is
+   THE MOLECULE COLOR LAW (the single most important rule on the site - this is
    pedagogy, not decoration). Every molecule has ONE fixed color used
-   EVERYWHERE it appears — in canvas particles, in prose, in legends, in
+   EVERYWHERE it appears - in canvas particles, in prose, in legends, in
    equations. If a visual shows CO2 it is red; H2O is blue; O2 is orange.
-   JS mirrors these exact values in scripts/tokens.js — keep the two in sync. */
+   JS mirrors these exact values in scripts/tokens.js - keep the two in sync. */
 
 :root {
   /* ---- backgrounds, darkest to lightest ---- */
-  --bg-deep: #04100b;      /* near-black forest green — the void inside a cell */
+  --bg-deep: #04100b;      /* near-black forest green - the void inside a cell */
   --bg-surface: #08170f;
   --bg-elevated: #0e2016;
   --bg-hover: #143020;
@@ -23,21 +23,21 @@
   --text-muted: #6a8377;
 
   /* ---- primary accents ---- */
-  --accent: #4ade80;       /* chlorophyll green — links, primary glow */
-  --accent-2: #ffd54a;     /* sunlight gold — secondary */
+  --accent: #4ade80;       /* chlorophyll green - links, primary glow */
+  --accent-2: #ffd54a;     /* sunlight gold - secondary */
 
   /* ================= THE MOLECULE COLOR LAW ================= */
-  --co2:     #f87171;      /* carbon dioxide — red */
-  --h2o:     #60a5fa;      /* water — blue */
-  --o2:      #fb923c;      /* oxygen — orange */
-  --atp:     #fbbf24;      /* ATP energy carrier — yellow */
-  --nadph:   #a78bfa;      /* NADPH electron carrier — violet */
-  --sugar:   #d8a15e;      /* glucose / G3P — warm brown */
-  --photon:  #ffe066;      /* light — gold */
-  --electron:#38e0d0;      /* excited electron — cyan */
-  --proton:  #f5b8d0;      /* H+ proton — pale pink */
-  --chloro:  #4ade80;      /* chlorophyll — green */
-  --rubisco: #5eead4;      /* the enzyme rubisco — teal */
+  --co2:     #f87171;      /* carbon dioxide - red */
+  --h2o:     #60a5fa;      /* water - blue */
+  --o2:      #fb923c;      /* oxygen - orange */
+  --atp:     #fbbf24;      /* ATP energy carrier - yellow */
+  --nadph:   #a78bfa;      /* NADPH electron carrier - violet */
+  --sugar:   #d8a15e;      /* glucose / G3P - warm brown */
+  --photon:  #ffe066;      /* light - gold */
+  --electron:#38e0d0;      /* excited electron - cyan */
+  --proton:  #f5b8d0;      /* H+ proton - pale pink */
+  --chloro:  #4ade80;      /* chlorophyll - green */
+  --rubisco: #5eead4;      /* the enzyme rubisco - teal */
   /* ========================================================= */
 
   /* ---- semantic (callouts, states) ---- */

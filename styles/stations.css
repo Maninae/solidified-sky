@@ -1,4 +1,4 @@
-/* stations.css — page layout: sidebar, hero, per-station rhythm, responsive.
+/* stations.css - page layout: sidebar, hero, per-station rhythm, responsive.
    base.css owns tokens + reusable components; this owns the page shell. */
 
 /* ---------- sidebar ---------- */
@@ -251,7 +251,7 @@ article { max-width: var(--content-max); margin: 0 auto; }
 }
 .steps li strong, .step strong { color: var(--text-primary); }
 
-/* horizontal "beats" — 3 cards in a row above a sim */
+/* horizontal "beats" - 3 cards in a row above a sim */
 .steps.beats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -521,7 +521,7 @@ article { max-width: var(--content-max); margin: 0 auto; }
 
 /* ---------- responsive ---------- */
 
-/* stack spreads on narrow screens — one column, no width breakout */
+/* stack spreads on narrow screens - one column, no width breakout */
 @media (max-width: 900px) {
   .spread,
   .spread.figure-wide,
