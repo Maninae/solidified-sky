@@ -31,15 +31,21 @@ import { COLORS } from '../tokens.js';
 import { mountStage } from '../engine.js';
 import { drawTree, drawSun } from '../primitives.js';
 import { ParticleSystem, bezierPath } from '../particles.js';
-import { lerp, mixHex, withAlpha } from '../util.js';
+import { lerp, mixHex, withAlpha, lighten } from '../util.js';
 
 // --- The pedagogical truth --------------------------------------------------
 // Rough percentages of a tree's DRY mass. Standard plant-biochem values:
 // ~45–50 % C, ~42–45 % O, ~6 % H, ~2–5 % mineral ash. We collapse O + H (both
 // sourced from water) and round to a clean 47 / 50 / 3 that adds to 100.
-const TRUTH_SOIL   = 3;
-const TRUTH_CARBON = 47;
-const TRUTH_WATER  = 50;
+// Where a tree's DRY mass actually comes from (standard textbook model).
+// The key correction: the OXYGEN in wood comes from CO₂, not water - water's
+// oxygen leaves as O₂ (the Ruben-Kamen point in Station 3). Only hydrogen is
+// from water. So carbon + oxygen (~91%) both come from the AIR.
+const TRUTH_CARBON   = 47;  // carbon, from CO₂ in the air
+const TRUTH_OXYGEN   = 44;  // oxygen, ALSO from CO₂ in the air
+const TRUTH_HYDROGEN = 6;   // hydrogen, from water
+const TRUTH_SOIL     = 3;   // minerals, from soil
+const TRUTH_AIR      = TRUTH_CARBON + TRUTH_OXYGEN;  // ~91% from thin air
 
 // Van Helmont's willow experiment (~1648): ~74 kg gained by the tree, ~60 g
 // lost by the soil over 5 years of watering. The famous demonstration that
@@ -240,7 +246,8 @@ function drawChart(ctx, c, state) {
   ctx.fillStyle = COLORS.textSecondary;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  ctx.fillText(state.revealed ? "The tree's dry mass" : 'Your guess', inner.x, inner.y);
+  const title = state.revealed ? "The tree's dry mass" : 'Your guess';
+  ctx.fillText(title, inner.x, inner.y);
   ctx.restore();
 
   const barTop = inner.y + 30;
@@ -249,62 +256,87 @@ function drawChart(ctx, c, state) {
   const barW   = 46;
   const barX   = inner.x;
 
-  // Interpolated percentages. Pre-reveal: soil = guess, air+water fills the
-  // rest. Post-reveal: soil animates toward 3 %; the air+water portion splits
-  // into carbon (47 %) and water (50 %) via a fixed ratio.
+  // Interpolated percentages. Pre-reveal: soil = guess, the rest is one green
+  // "air + water" band. Post-reveal: soil animates toward 3 %, and the rest
+  // splits into carbon + oxygen (both from CO₂ in the AIR) + hydrogen (water).
   const soilPct = lerp(state.guess, TRUTH_SOIL, state.revealT);
-  const airPct  = 100 - soilPct;
-  const ratioC  = TRUTH_CARBON / (TRUTH_CARBON + TRUTH_WATER);
-  const ratioW  = TRUTH_WATER  / (TRUTH_CARBON + TRUTH_WATER);
-  const carbPct = airPct * ratioC;
-  const watrPct = airPct * ratioW;
+  const rest    = 100 - soilPct;                       // everything but soil
+  const denom   = TRUTH_CARBON + TRUTH_OXYGEN + TRUTH_HYDROGEN;
+  const carbPct = rest * TRUTH_CARBON   / denom;
+  const oxyPct  = rest * TRUTH_OXYGEN   / denom;
+  const hydPct  = rest * TRUTH_HYDROGEN / denom;
 
-  // Colors: both carbon + water start GREEN (fused into one "air + water"
-  // band at revealT = 0) and split into red (CO₂) / blue (H₂O) as revealT → 1.
-  const carbColor = mixHex(COLORS.accent, COLORS.co2, state.revealT);
-  const watrColor = mixHex(COLORS.accent, COLORS.h2o, state.revealT);
+  // Colors: all start GREEN (fused "air + water" at revealT 0). Carbon and
+  // oxygen resolve to reds (both from the air); hydrogen to blue (water).
+  const airRed    = COLORS.co2;                 // carbon
+  const airRedLt  = lighten(COLORS.co2, 0.26);  // oxygen - lighter red, still "air"
+  const carbColor = mixHex(COLORS.accent, airRed,   state.revealT);
+  const oxyColor  = mixHex(COLORS.accent, airRedLt, state.revealT);
+  const hydColor  = mixHex(COLORS.accent, COLORS.h2o, state.revealT);
   const soilColor = COLORS.sugar;
 
   const hCarb = barH * (carbPct / 100);
-  const hWatr = barH * (watrPct / 100);
+  const hOxy  = barH * (oxyPct  / 100);
+  const hHyd  = barH * (hydPct  / 100);
   const hSoil = barH * (soilPct / 100);
 
   let y = barTop;
   ctx.fillStyle = carbColor; ctx.fillRect(barX, y, barW, hCarb); y += hCarb;
-  ctx.fillStyle = watrColor; ctx.fillRect(barX, y, barW, hWatr); y += hWatr;
+  ctx.fillStyle = oxyColor;  ctx.fillRect(barX, y, barW, hOxy);  y += hOxy;
+  ctx.fillStyle = hydColor;  ctx.fillRect(barX, y, barW, hHyd);  y += hHyd;
   ctx.fillStyle = soilColor; ctx.fillRect(barX, y, barW, hSoil);
+
+  // Bracket the two air bands (post-reveal) - the punchline.
+  if (state.revealT > 0.05) {
+    ctx.save();
+    ctx.globalAlpha = state.revealT;
+    ctx.strokeStyle = COLORS.accent2;
+    ctx.lineWidth = 2;
+    const bx = barX - 7, y0 = barTop + 1, y1 = barTop + hCarb + hOxy - 1;
+    ctx.beginPath();
+    ctx.moveTo(bx + 4, y0); ctx.lineTo(bx, y0);
+    ctx.lineTo(bx, y1); ctx.lineTo(bx + 4, y1);
+    ctx.stroke();
+    ctx.restore();
+  }
 
   ctx.strokeStyle = COLORS.ruleStrong;
   ctx.lineWidth = 1;
   ctx.strokeRect(barX + 0.5, barTop + 0.5, barW, barH);
 
-  // Labels on the right. Air+water fades OUT as reveal progresses; the two
-  // split labels fade IN. Soil stays visible throughout.
-  const labelX  = barX + barW + 18;
-  const preA    = 1 - state.revealT;
-  const postA   = state.revealT;
+  // Labels on the right. The green "air + water" label fades OUT; the four
+  // resolved labels fade IN. Soil stays visible throughout.
+  const labelX = barX + barW + 18;
+  const preA   = 1 - state.revealT;
+  const postA  = state.revealT;
 
-  // Post-reveal labels first (top-of-bar order) so we can stagger the water
-  // label if it would collide with the carbon label at very small bar heights.
-  const carbMidY = barTop + hCarb / 2;
-  const watrMidYRaw = barTop + hCarb + hWatr / 2;
-  const watrMidY = Math.max(watrMidYRaw, carbMidY + 22);
-  drawSegLabel(ctx, labelX, carbMidY, COLORS.co2,
-    'Carbon (from CO₂)', pctText(TRUTH_CARBON), postA);
-  drawSegLabel(ctx, labelX, watrMidY, COLORS.h2o,
-    'H + O (from water)', pctText(TRUTH_WATER), postA);
+  // Stagger post-reveal labels so thin bands don't collide.
+  const cMid = barTop + hCarb / 2;
+  const oMid = Math.max(barTop + hCarb + hOxy / 2, cMid + 20);
+  const hMid = Math.max(barTop + hCarb + hOxy + hHyd / 2, oMid + 20);
+  drawSegLabel(ctx, labelX, cMid, airRed,       'Carbon - from the air', pctText(TRUTH_CARBON), postA);
+  drawSegLabel(ctx, labelX, oMid, airRedLt,     'Oxygen - from the air', pctText(TRUTH_OXYGEN), postA);
+  drawSegLabel(ctx, labelX, hMid, COLORS.h2o,   'Hydrogen - from water', pctText(TRUTH_HYDROGEN), postA);
 
   // Pre-reveal single label for the combined green band.
-  const combinedMidY = barTop + (hCarb + hWatr) / 2;
-  drawSegLabel(ctx, labelX, combinedMidY, COLORS.accent,
-    'Air + water', pctText(airPct), preA);
+  const combinedMid = barTop + (hCarb + hOxy + hHyd) / 2;
+  drawSegLabel(ctx, labelX, combinedMid, COLORS.accent, 'Air + water', pctText(rest), preA);
 
-  // Soil label - nudge downward if the sliver is too thin for its mid to sit
-  // clearly below the other labels.
-  const soilMidYRaw = barTop + hCarb + hWatr + hSoil / 2;
-  const soilMidY = Math.max(soilMidYRaw, watrMidY + 22);
-  drawSegLabel(ctx, labelX, soilMidY, soilColor,
-    'Minerals (from soil)', pctText(soilPct), 1);
+  // Soil label - nudged below the others.
+  const soilMid = Math.max(barTop + hCarb + hOxy + hHyd + hSoil / 2, hMid + 20);
+  drawSegLabel(ctx, labelX, soilMid, soilColor, 'Minerals - from soil', pctText(soilPct), 1);
+
+  // Punchline tag at the top of the bar (post-reveal) - "91% from the air".
+  if (state.revealT > 0.5) {
+    ctx.save();
+    ctx.globalAlpha = (state.revealT - 0.5) * 2;
+    ctx.font = '700 12px system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = COLORS.accent2;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('↑ ' + TRUTH_AIR + '% from the air', labelX, barTop - 4);
+    ctx.restore();
+  }
 }
 
 /* One "chip + name + percent" row, drawn at a given alpha. Skipped when
@@ -345,5 +377,5 @@ function guessBlurb(pct) {
 }
 
 function revealBlurb() {
-  return `Van Helmont grew a willow for five years, adding only water. It gained about ${VH_TREE_KG} kg. The soil lost only about ${VH_SOIL_GRAMS} g. Of a tree's dry mass, roughly ${TRUTH_CARBON}% is carbon captured from CO₂ in the air, about ${TRUTH_WATER}% is hydrogen and oxygen from water, and only ~${TRUTH_SOIL}% comes from soil minerals. The wood is, almost entirely, solidified sky.`;
+  return `Van Helmont grew a willow for five years, adding only water. It gained about ${VH_TREE_KG} kg; the soil lost only about ${VH_SOIL_GRAMS} g. Here is the staggering part: about ${TRUTH_CARBON}% of a tree's dry mass is carbon and another ~${TRUTH_OXYGEN}% is oxygen - and BOTH are pulled from CO₂ in the air, not the ground. Only ~${TRUTH_HYDROGEN}% (the hydrogen) comes from water, and ~${TRUTH_SOIL}% from soil minerals. Over ${TRUTH_AIR}% of a tree is, atom by atom, assembled out of thin air.`;
 }
