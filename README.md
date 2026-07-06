@@ -1,10 +1,10 @@
 # Solidified Sky
 
-**A tree is made of air.** An immersive, always-running explainer that flies you down from a leaf into a living chloroplast and carries you *through* photosynthesis while it happens — photons streaming in, water splitting, electrons hopping, the Calvin cycle turning. **Every molecule, organelle, and diagram is drawn and animated in code** (Canvas 2D + SVG) — no raster art in the interactives, so everything stays accurate, animatable, and cohesive. (The only bitmaps are a subtle atmospheric backdrop behind the hero and the social share image.)
+**A tree is made of air.** An always-running explainer that flies you down from a leaf into a living chloroplast and carries you *through* photosynthesis while it happens - photons streaming in, water splitting, electrons hopping, the Calvin cycle turning. **Every molecule, organelle, and diagram is drawn and animated in code** (Canvas 2D + SVG), no raster art in the interactives, so everything stays accurate, animatable, and cohesive. (The only bitmaps are a subtle atmospheric backdrop behind the hero and the social share image.)
 
 **Live:** [maninae.github.io/solidified-sky](https://maninae.github.io/solidified-sky) · Science sibling to [Valence](https://maninae.github.io/valence/).
 
-## The journey (one continuous scroll)
+## One continuous scroll
 
 | # | Station | What you do |
 |---|---|---|
@@ -22,7 +22,7 @@ The **oxygen you breathe comes from splitting water, not from CO₂.** The carbo
 
 ## Built with
 
-Vanilla JS ES modules, no framework, no build step. A shared **code-drawn art system** — a `draw*` primitive library plus a pooled particle engine with sprite caching — is what keeps hundreds of animated molecules cohesive and accurate. See [`CLAUDE.md`](CLAUDE.md) for the architecture and the Molecule Color Law.
+Vanilla JS ES modules, no framework, no build step. A shared **code-drawn art system** (a `draw*` primitive library plus a pooled particle engine with sprite caching) is what keeps hundreds of animated molecules cohesive and accurate. See [`CLAUDE.md`](CLAUDE.md) for the architecture and the Molecule Color Law.
 
 ```
 python3 -m http.server    # then open http://localhost:8000
