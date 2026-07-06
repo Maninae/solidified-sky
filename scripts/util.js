@@ -25,8 +25,14 @@ export function smoothstep(edge0, edge1, x) {
    Color math. Every helper works on "#RRGGBB" hex strings so tokens.js stays
    the one source of truth for color identity. */
 
-/** Parse "#RRGGBB" (with or without leading #) into [r, g, b] channel ints. */
+/** Parse a color into [r, g, b] channel ints. Accepts "#RRGGBB" (with or
+    without the #) AND "rgb(...)"/"rgba(...)" strings, so the color helpers
+    below compose freely (e.g. withAlpha(lighten(token, k), a)). */
 export function hexToRgb(hex) {
+  if (hex[0] !== '#' && hex.includes('(')) {
+    const m = hex.match(/[\d.]+/g) || [];
+    return [Number(m[0]) || 0, Number(m[1]) || 0, Number(m[2]) || 0];
+  }
   const h = hex.replace('#', '');
   return [parseInt(h.slice(0, 2), 16),
           parseInt(h.slice(2, 4), 16),
