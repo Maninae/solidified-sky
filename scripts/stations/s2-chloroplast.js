@@ -39,6 +39,14 @@ const TOUR_PHASE_S = 2.5;
 const N_ENVELOPE   = 3.2;   // superellipse exponent; matches drawChloroplast
 const N_DRIFTERS   = 12;
 
+// First-arrival hint - a soft ring pulsing around one granum to say "these
+// are clickable". Fades in over 1s, holds ~7s, fades out over 2s (total 10s),
+// or dies the moment the reader clicks anything or starts the tour.
+const HINT_GRANUM_IDX = 2;   // top-center granum in the GRANA layout
+const HINT_TOTAL_S    = 10;
+const HINT_FADE_IN_S  = 1;
+const HINT_FADE_OUT_S = 2;
+
 export function init(sectionEl) {
   try { mount(sectionEl); }
   catch (err) {
@@ -63,6 +71,7 @@ function mount(sectionEl) {
     parallax: { tx: 0, ty: 0, cx: 0, cy: 0 },
     labels: new Set(),
     tour: null,   // { phase, t } while active
+    hint: { active: true, elapsed: 0 },  // dies on first click / tour start
   };
 
   const layout = (W, H) => {
@@ -136,6 +145,24 @@ function mount(sectionEl) {
     // 4. Envelope - radial wash + double stroke.
     drawEnvelope(ctx, state.cx + px * OFF.env, state.cy + py * OFF.env, state.a, state.b);
 
+    // 4a. First-arrival "click me" pulse around one granum (fades on interact).
+    if (state.hint.active) {
+      let alpha;
+      if (REDUCED_MOTION) {
+        // Reduced motion: single static frame. Show the hint at a mild fixed
+        // alpha so the affordance is visible without any pulsing.
+        alpha = 0.55;
+      } else {
+        state.hint.elapsed += dt;
+        alpha = hintAlpha(state.hint.elapsed);
+        if (alpha <= 0) state.hint.active = false;
+      }
+      if (alpha > 0) {
+        const [gx, gy] = state.granaXY[HINT_GRANUM_IDX];
+        drawHintPulse(ctx, gx + px * OFF.gran, gy + py * OFF.gran, t, alpha);
+      }
+    }
+
     // 5. Advance the tour, then spotlight-dim if one is active.
     if (state.tour) {
       state.tour.t += dt;
@@ -165,6 +192,7 @@ function mount(sectionEl) {
     state.tour = { phase: 0, t: 0 };
     state.labels.add(TOUR_ORDER[0]);
     setReadout(PARTS[TOUR_ORDER[0]]);
+    state.hint.active = false;
     btnTour.textContent = 'Stop tour';
     if (REDUCED_MOTION) stage.renderStatic();
   };
@@ -187,6 +215,7 @@ function mount(sectionEl) {
     const hit = hitTest(state, e.clientX - r.left, e.clientY - r.top);
     if (!hit) return;
     if (state.tour) stopTour();          // manual clicks abort a running tour
+    state.hint.active = false;           // any real interaction ends the hint
     state.labels.add(hit);
     setReadout(PARTS[hit]);
     if (REDUCED_MOTION) stage.renderStatic();
@@ -237,6 +266,38 @@ function drawEnvelope(ctx, cx, cy, a, b) {
   ctx.stroke(superellipsePath(0, 0, a,     b,     N_ENVELOPE));
   ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(200, 245, 215, 0.30)';
   ctx.stroke(superellipsePath(0, 0, a - 8, b - 8, N_ENVELOPE));
+  ctx.restore();
+}
+
+/* Envelope for the first-arrival hint alpha: fade in, hold, fade out. */
+function hintAlpha(elapsed) {
+  if (elapsed < HINT_FADE_IN_S)                     return elapsed / HINT_FADE_IN_S;
+  if (elapsed < HINT_TOTAL_S - HINT_FADE_OUT_S)     return 1;
+  if (elapsed < HINT_TOTAL_S)                       return (HINT_TOTAL_S - elapsed) / HINT_FADE_OUT_S;
+  return 0;
+}
+
+/* Two soft breathing rings around a granum, additive. Two phases offset in
+ * time give it a heartbeat-y feel; alpha is scaled by the fade envelope so
+ * the whole hint eases in and out cleanly. Uses tokens for the ring color. */
+function drawHintPulse(ctx, gx, gy, t, alpha) {
+  const rBase = 26;
+  const phase1 = (Math.sin(t * 2.2)       + 1) / 2;
+  const phase2 = (Math.sin(t * 2.2 + 1.5) + 1) / 2;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  // Outer ring - wider swell, weaker line.
+  ctx.strokeStyle = withAlpha(COLORS.accent, alpha * (0.55 - 0.40 * phase1));
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(gx, gy, rBase + 14 * phase1, 0, Math.PI * 2);
+  ctx.stroke();
+  // Inner ring - tighter, offset for a "second beat".
+  ctx.strokeStyle = withAlpha(COLORS.accent, alpha * (0.75 - 0.50 * phase2));
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.arc(gx, gy, rBase + 6 * phase2, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.restore();
 }
 

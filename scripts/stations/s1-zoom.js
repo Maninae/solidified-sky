@@ -20,7 +20,7 @@ import {
   drawTree, drawLeafCrossSection, drawLeafCell, roundedLeafPath, drawSun,
 } from '../primitives.js';
 import { ParticleSystem, bezierPath } from '../particles.js';
-import { clamp, smoothstep, roundRect, prefersReducedMotion } from '../util.js';
+import { clamp, smoothstep, roundRect, withAlpha, prefersReducedMotion } from '../util.js';
 
 const REDUCED_MOTION = prefersReducedMotion();
 
@@ -79,6 +79,19 @@ function mount(sectionEl) {
   const system = new ParticleSystem(120);
   let u = slider.valueAsNumber / 1000;
 
+  // First-two-molecules teaching aid at cell scale: label the first couple of
+  // drifting CO₂ particles so the red pairs pin back to Station 0's "tree
+  // from air" and the sidebar legend. Once the two have been assigned, no
+  // more labels appear (this is a one-shot orient, not perpetual chrome).
+  //
+  // Slot-recycling is real: after a particle dies, its id may be reused by
+  // any species. We store {id, seed} at spawn time (pathSeed is set to
+  // Math.random() then) and drop the label the moment the seed no longer
+  // matches - which guarantees we never label a stranger.
+  const MAX_CO2_LABELS = 2;
+  const labeledCO2 = [];       // live entries: [{ id, seed }, ...]
+  let co2LabelsAssigned = 0;   // monotonic - never resets while mounted
+
   const updateReadout = () => {
     const { weights } = sceneMix(u);
     let best = SCENES[0], bestW = -1;
@@ -97,8 +110,16 @@ function mount(sectionEl) {
     flowClock += dt;
     while (flowClock >= 0.55) {
       flowClock -= 0.55;
-      if (weights.cross > weights.cell) spawnCrossFlow(system, W, H);
-      else                              spawnCellFlow (system, W, H);
+      if (weights.cross > weights.cell) {
+        spawnCrossFlow(system, W, H);
+      } else {
+        // spawnCellFlow returns the CO₂ id so we can label the first couple.
+        const co2Id = spawnCellFlow(system, W, H);
+        if (co2LabelsAssigned < MAX_CO2_LABELS && co2Id >= 0) {
+          labeledCO2.push({ id: co2Id, seed: system.pathSeed[co2Id] });
+          co2LabelsAssigned++;
+        }
+      }
     }
   };
 
@@ -124,6 +145,18 @@ function mount(sectionEl) {
     trySpawnFlow(dt, W, H, weights);
     system.update(dt);
     system.draw(ctx);
+
+    // "CO₂" tags on the first couple of drifting particles at cell scale.
+    // Filter recycled slots defensively via the stored pathSeed.
+    if (labeledCO2.length) {
+      for (let i = labeledCO2.length - 1; i >= 0; i--) {
+        const { id, seed } = labeledCO2[i];
+        if (!system.alive[id] || system.pathSeed[id] !== seed) {
+          labeledCO2.splice(i, 1);
+        }
+      }
+      drawCO2Labels(ctx, system, labeledCO2);
+    }
   }, { background: COLORS.bgDeep });
 
   // prefers-reduced-motion: Stage paints once. Repaint on scrub.
@@ -310,6 +343,9 @@ function spawnCrossFlow(system, W, H) {
   ), { duration: 3.4, jitter: 4, scale: 0.7 });
 }
 
+/* Returns the CO₂ particle id (or -1) so the caller can label the first
+ * couple of these drifters at cell scale. The O₂ id is discarded; it's the
+ * red CO₂ that pins back to Station 0's "tree from air" story. */
 function spawnCellFlow(system, W, H) {
   const cx = W / 2, cy = H / 2;
   const R  = Math.min(W, H) * 0.30;
@@ -317,7 +353,7 @@ function spawnCellFlow(system, W, H) {
   const aOut = Math.random() * Math.PI * 2;
 
   // CO2 drifts inward from off-canvas toward a chloroplast.
-  system.spawnOnPath('co2', bezierPath(
+  const co2Id = system.spawnOnPath('co2', bezierPath(
     [cx + Math.cos(aIn) * R * 2.2, cy + Math.sin(aIn) * R * 2.2],
     [cx + Math.cos(aIn) * R * 1.4, cy + Math.sin(aIn) * R * 1.2],
     [cx + Math.cos(aIn) * R * 0.9, cy + Math.sin(aIn) * R * 0.7],
@@ -331,4 +367,30 @@ function spawnCellFlow(system, W, H) {
     [cx + Math.cos(aOut) * R * 1.4, cy + Math.sin(aOut) * R * 1.2],
     [cx + Math.cos(aOut) * R * 2.2, cy + Math.sin(aOut) * R * 2.2],
   ), { duration: 3.0, jitter: 4, scale: 0.8 });
+
+  return co2Id;
+}
+
+/* Tiny "CO₂" tags floating next to the first couple of red drifters. The
+ * stroke gives the text a soft dark halo so it stays legible over the leaf
+ * cell wash, and the fill uses the shared CO₂ token so the tag reads as
+ * "same molecule as the sidebar legend". */
+function drawCO2Labels(ctx, system, entries) {
+  if (!entries.length) return;
+  ctx.save();
+  ctx.font = '600 10px "JetBrains Mono", ui-monospace, monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(4, 16, 11, 0.85)';
+  const fill = withAlpha(COLORS.co2, 0.95);
+  for (const { id } of entries) {
+    const x = system.xs[id] + 10;
+    const y = system.ys[id] - 8;
+    ctx.strokeText('CO₂', x, y);
+    ctx.fillStyle = fill;
+    ctx.fillText('CO₂', x, y);
+  }
+  ctx.restore();
 }

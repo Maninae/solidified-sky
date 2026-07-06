@@ -95,7 +95,10 @@ function statusFor(f) {
   const photo = photoRate(f);
   if (photo <= 0.02) return 'night - respiring only';
   if (photo > RESP_RATE + 0.14) return 'daytime - net producing';
-  return f < 0.5 ? 'dawn - near balance' : 'dusk - near balance';
+  // "Compensation point" is the light level where photosynthesis exactly
+  // cancels respiration - crossed twice a day, once at dawn and once at dusk.
+  return f < 0.5 ? 'dawn - compensation point (near balance)'
+                 : 'dusk - compensation point (near balance)';
 }
 
 // Deterministic star field - cheap hash on index so the set survives resize.
@@ -125,21 +128,27 @@ function spawnOut(ps, type, stom) {
 // ---- decor draws ---------------------------------------------------------
 
 function drawLeaf(ctx, cx, cy, w, h, glowK) {
+  // glowK ∈ [0,1] tracks ambient light. At night (glowK≈0) the leaf must fall
+  // to a near-silhouette against the dark ground band, otherwise "night" reads
+  // like "cloudy midday". At noon (glowK≈1) it lights up as a bright wafer.
   ctx.save();
   ctx.shadowColor = COLORS.chloro;
-  ctx.shadowBlur = 10 + 20 * glowK;
+  ctx.shadowBlur = 4 + 26 * glowK;
   const leaf = roundedLeafPath(cx, cy, w, h);
+  // Non-linear darkening for the low end - dim harder for the first bit of
+  // twilight so the leaf reads "off" at night rather than "green-in-shade".
+  const litK = glowK * glowK;
   const g = ctx.createRadialGradient(cx, cy, 8, cx, cy, w / 2);
-  g.addColorStop(0,   `rgba(140, 245, 175, ${0.35 + 0.45 * glowK})`);  // bespoke light-chloro tint
-  g.addColorStop(0.7, withAlpha(COLORS.chloro, 0.30 + 0.30 * glowK));
-  g.addColorStop(1,   'rgba(24, 100, 55, 0.55)');                       // bespoke dark-chloro shade
+  g.addColorStop(0,   `rgba(140, 245, 175, ${0.08 + 0.72 * litK})`);   // bespoke light-chloro tint
+  g.addColorStop(0.7, withAlpha(COLORS.chloro, 0.08 + 0.52 * litK));
+  g.addColorStop(1,   `rgba(12, 40, 22, ${0.55 + 0.20 * litK})`);      // bespoke dark-chloro shade
   ctx.fillStyle = g;
   ctx.fill(leaf);
   ctx.shadowBlur = 0;
-  ctx.strokeStyle = 'rgba(200, 245, 215, 0.42)';
+  ctx.strokeStyle = `rgba(200, 245, 215, ${0.12 + 0.32 * glowK})`;
   ctx.lineWidth = 1.4;
   ctx.stroke(leaf);
-  ctx.strokeStyle = 'rgba(20, 70, 40, 0.55)';
+  ctx.strokeStyle = `rgba(20, 70, 40, ${0.30 + 0.30 * glowK})`;
   ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(cx - w * 0.42, cy);
@@ -164,6 +173,38 @@ function drawMoon(ctx, x, y, r) {
   // Nudge a soft shadow onto one side so it reads as a moon, not a bright dot.
   ctx.fillStyle = 'rgba(20, 30, 60, 0.30)';
   ctx.beginPath(); ctx.arc(x + r * 0.35, y - r * 0.15, r * 0.72, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+// Tiny in/out chevrons tucked under each stoma. The UP chevron shows the
+// species currently moving INTO the leaf (day: CO₂, night: O₂); the DOWN
+// chevron shows the species leaving. Kept small + low-alpha so they support
+// the particle flow instead of competing with it.
+function drawFlowChevrons(ctx, stom, netO2) {
+  const mag = Math.abs(netO2);
+  if (mag < 0.02) return;
+  const alpha  = Math.min(0.55, mag * 2.4);
+  const upCol   = netO2 > 0 ? COLORS.co2 : COLORS.o2;   // moving up = "in"
+  const downCol = netO2 > 0 ? COLORS.o2  : COLORS.co2;  // moving down = "out"
+  const y0 = stom.y + 16;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  // Up-chevron on the left of the stoma.
+  ctx.fillStyle = upCol;
+  ctx.beginPath();
+  ctx.moveTo(stom.x - 15, y0 + 5);
+  ctx.lineTo(stom.x - 11, y0);
+  ctx.lineTo(stom.x -  7, y0 + 5);
+  ctx.closePath();
+  ctx.fill();
+  // Down-chevron on the right of the stoma.
+  ctx.fillStyle = downCol;
+  ctx.beginPath();
+  ctx.moveTo(stom.x +  7, y0);
+  ctx.lineTo(stom.x + 11, y0 + 5);
+  ctx.lineTo(stom.x + 15, y0);
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 }
 
@@ -252,11 +293,27 @@ function mount(sectionEl) {
       }
 
       // ---- sun / moon on arc ----
+      // Sun intensity is capped below max so the disc's pure-white core doesn't
+      // dominate at noon; then a warm gold veil restores the sun-ness that the
+      // white body gradient in drawSun would otherwise wash out.
       const arcTop = 46, arcBot = groundY - 20;
+      const photoNow = photoRate(state.dayFrac);
       const s = sunArc(state.dayFrac);
       if (s) {
-        const px = s[0] * W, py = arcTop + s[1] * (arcBot - arcTop);
-        drawSun(ctx, px, py, { intensity: 0.35 + 0.65 * photoRate(state.dayFrac), r: 30 });
+        const sx = s[0] * W, sy = arcTop + s[1] * (arcBot - arcTop);
+        drawSun(ctx, sx, sy, { intensity: 0.35 + 0.40 * photoNow, r: 30 });
+        ctx.save();
+        const veilR = 30;
+        const veil = ctx.createRadialGradient(sx, sy, 0, sx, sy, veilR);
+        const goldA = 0.22 + 0.32 * photoNow;
+        veil.addColorStop(0,   `rgba(255, 198, 66, ${goldA})`);
+        veil.addColorStop(0.75,`rgba(255, 190, 60, ${goldA * 0.65})`);
+        veil.addColorStop(1,   'rgba(255, 190, 60, 0)');
+        ctx.fillStyle = veil;
+        ctx.beginPath();
+        ctx.arc(sx, sy, veilR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
       const m = moonArc(state.dayFrac);
       if (m) {
@@ -285,9 +342,14 @@ function mount(sectionEl) {
       drawStoma(ctx, stomB.x, stomB.y, { openness: 0.9, scale: 0.55, glow: false });
 
       // ---- particle spawn: net direction determines species + direction ----
-      const photo = photoRate(state.dayFrac);
-      const netO2 = photo - RESP_RATE;                  // + day, - night
+      const netO2 = photoNow - RESP_RATE;               // + day, - night
       const mag   = Math.abs(netO2);
+
+      // Small chevron pair below each stoma - a subtle "which color goes which
+      // way" cue so the reader can tell red CO₂ (in) from orange O₂ (out) at
+      // sprite size. Only shows when there's a meaningful net flow.
+      drawFlowChevrons(ctx, stomA, netO2);
+      drawFlowChevrons(ctx, stomB, netO2);
       // spawnEvery: fast at peak day, slow at twilight/night.
       const spawnEvery = 1 / (2.5 + mag * 32);
       state.spawnAcc += dt;

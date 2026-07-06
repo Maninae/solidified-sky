@@ -233,16 +233,31 @@ function drawSpectrumPanel(ctx, box, state) {
   ctx.stroke();
 
   // Peak / trough labels - pinned above the chart so they never touch the curve.
+  // "peak" marks get a leader tick down to their curve dot (auditors read the
+  // labels as floating; the tick anchors them to the actual peak).
   const marks = [
-    { nm: 430, label: 'blue peak', align: 'left'   },
-    { nm: 550, label: 'green gap', align: 'center' },
-    { nm: 660, label: 'red peak',  align: 'right'  },
+    { nm: 430, label: 'blue peak', align: 'left',   kind: 'peak' },
+    { nm: 550, label: 'green gap', align: 'center', kind: 'gap'  },
+    { nm: 660, label: 'red peak',  align: 'right',  kind: 'peak' },
   ];
   ctx.font = '11px "JetBrains Mono", ui-monospace, monospace';
   for (const m of marks) {
     const mx = nmToX(m.nm);
     const my = absToY(absorptionAt(m.nm));
     const color = wavelengthToRGB(m.nm);
+    const lx = m.align === 'left' ? mx - 8 : m.align === 'right' ? mx + 8 : mx;
+    if (m.kind === 'peak') {
+      // Leader tick: from just below the label baseline down to just above the
+      // dot, in the peak's own wavelength color so the eye pairs them instantly.
+      ctx.save();
+      ctx.strokeStyle = withAlpha(color, 0.60);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(lx, chart.y - 3);
+      ctx.lineTo(mx, my - 5);
+      ctx.stroke();
+      ctx.restore();
+    }
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(mx, my, 3.2, 0, Math.PI * 2);
@@ -253,7 +268,6 @@ function drawSpectrumPanel(ctx, box, state) {
     ctx.fillStyle = COLORS.textSecondary;
     ctx.textAlign = m.align;
     ctx.textBaseline = 'bottom';
-    const lx = m.align === 'left' ? mx - 8 : m.align === 'right' ? mx + 8 : mx;
     ctx.fillText(m.label, lx, chart.y - 6);
     ctx.fillText(`${m.nm} nm`, lx, chart.y - 20);
   }
