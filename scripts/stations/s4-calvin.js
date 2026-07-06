@@ -50,12 +50,23 @@ const PHASES = [
     text: 'The 6-carbon intermediate splits into two 3-PGA molecules.' },
   { key: 'g3p',     dur: 2.0, active: 'g3p',  pts: [[ 130,   0], [  95,  80], [   0, 130]],
     text: 'ATP and NADPH power the conversion into G3P - a real sugar.' },
-  { key: 'turn',    dur: 1.4, active: 'g3p',  pts: [[   0, 130], [   0, 130], [   0, 130]],
-    text: 'One turn done. Six turns of the cycle build one glucose.' },
+  { key: 'turn',    dur: 1.6, active: 'g3p',  pts: [[   0, 130], [   0, 130], [   0, 130]],
+    text: 'One turn done. The other five turns look identical - skipping ahead.' },
   { key: 'exit',    dur: 2.2, active: null,   pts: [[   0, 130], [ 140, 175], [ 250, 190]],
-    text: 'Six carbons join up - your atom is now part of glucose. C₆H₁₂O₆.' },
+    text: 'Six turns = one glucose. Your atom is now part of C₆H₁₂O₆.' },
 ];
 const ENDING = 'Done. That atom is locked into glucose. Six turns of the wheel, one sugar. Rubisco does that on nearly every leaf on Earth, all day long.';
+
+/* One turn of the Calvin cycle consumes 3 ATP + 2 NADPH (per fixed CO₂).
+   Stagger them across the g3p phase so the reduction reads as a small burst,
+   not a blizzard. Each entry: fraction of phase at which to fire, carrier. */
+const SPEND_SCHEDULE = [
+  { at: 0.10, type: 'atp'   },
+  { at: 0.24, type: 'nadph' },
+  { at: 0.40, type: 'atp'   },
+  { at: 0.56, type: 'nadph' },
+  { at: 0.72, type: 'atp'   },
+];
 
 export function init(sectionEl) {
   try { mount(sectionEl); }
@@ -80,9 +91,11 @@ function mount(sectionEl) {
     atomWorld: { x: -460, y: -60 },
     trail: [],           // {x, y, age} in world coords
     turnsShown: 0,       // 0..6 pips filled
-    spentPhase: -1,      // guard so ATP + NADPH only fly in once per g3p phase
+    spentPhase: -1,      // which phaseIdx the current spend schedule belongs to
+    spendIdx: 0,         // next entry in SPEND_SCHEDULE to fire this g3p phase
     idleTheta: 0,        // seconds, drives the wheel's ambient spin
     camBlend: 0,         // 0 = origin, 1 = follow atom (eases on ride start/stop)
+    staticDiagram: reducedMotion, // reduced-motion fallback: labeled diagram, no dimming
   };
   const particles = new ParticleSystem(160);
   const paths = PHASES.map(p => catmullRom(p.pts));
@@ -97,7 +110,7 @@ function mount(sectionEl) {
   function startRide() {
     Object.assign(state, {
       riding: true, done: false, phaseIdx: 0, phaseT: 0,
-      atomVisible: true, turnsShown: 0, spentPhase: -1, camBlend: 0,
+      atomVisible: true, turnsShown: 0, spentPhase: -1, spendIdx: 0, camBlend: 0,
     });
     state.atomWorld.x = PHASES[0].pts[0][0];
     state.atomWorld.y = PHASES[0].pts[0][1];
@@ -108,7 +121,7 @@ function mount(sectionEl) {
   function resetRide() {
     Object.assign(state, {
       riding: false, done: false, phaseIdx: 0, phaseT: 0,
-      atomVisible: false, turnsShown: 0, spentPhase: -1, camBlend: 0,
+      atomVisible: false, turnsShown: 0, spentPhase: -1, spendIdx: 0, camBlend: 0,
     });
     state.trail.length = 0;
     particles.clear();
@@ -205,10 +218,18 @@ function seedAmbient(particles, dt) {
 
 function maybeSpendCarriers(state, particles) {
   if (!state.riding || PHASES[state.phaseIdx].key !== 'g3p') return;
-  if (state.spentPhase === state.phaseIdx || state.phaseT < 0.15) return;
-  state.spentPhase = state.phaseIdx;
-  const dest = [state.atomWorld.x, state.atomWorld.y];
-  for (const [type, from] of [['atp', ATP_SLOT], ['nadph', NADPH_SLOT]]) {
+  // First frame of this g3p phase: arm the schedule fresh.
+  if (state.spentPhase !== state.phaseIdx) {
+    state.spentPhase = state.phaseIdx;
+    state.spendIdx = 0;
+  }
+  // Fire every scheduled carrier whose time-in-phase has passed. The atom is
+  // moving through g3p, so each spawn aims at wherever it is right now.
+  while (state.spendIdx < SPEND_SCHEDULE.length &&
+         state.phaseT >= SPEND_SCHEDULE[state.spendIdx].at) {
+    const type = SPEND_SCHEDULE[state.spendIdx++].type;
+    const from = type === 'atp' ? ATP_SLOT : NADPH_SLOT;
+    const dest = [state.atomWorld.x, state.atomWorld.y];
     particles.spawnOnPath(type,
       catmullRom([[from.x, from.y],
                   [(from.x + dest[0]) / 2, (from.y + dest[1]) / 2 - 20],
@@ -217,20 +238,49 @@ function maybeSpendCarriers(state, particles) {
   }
 }
 
+/* -------- label alpha: dim what the ride hasn't reached yet ----------------- */
+
+/* Before the ride starts every node label lights up at once and the wheel
+   reads busy. This map keeps text quiet until the atom's tour arrives at
+   each landmark, so the idle diagram feels calm and the ride teaches the
+   parts in order. Keys mirror NODES + a few extras (rubisco, atp, nadph,
+   outside, inside). */
+const DIM_LABEL = 0.28;
+function labelAlpha(state) {
+  const a = { outside: DIM_LABEL, inside: DIM_LABEL, rubp: DIM_LABEL,
+              pga: DIM_LABEL, g3p: DIM_LABEL, regen: DIM_LABEL,
+              rubisco: DIM_LABEL, atp: DIM_LABEL, nadph: DIM_LABEL };
+  if (state.staticDiagram) {
+    for (const k in a) a[k] = 1; // reduced-motion: full labeled diagram
+    return a;
+  }
+  if (!state.riding && !state.done) return a;
+  const idx = state.phaseIdx;
+  // Phase order: 0 air, 1 stoma, 2 stroma, 3 rubisco, 4 pga, 5 g3p, 6 turn, 7 exit.
+  if (idx >= 0) a.outside = 1;
+  if (idx >= 2) a.inside = 1;
+  if (idx >= 3) { a.rubisco = 1; a.rubp = 1; }
+  if (idx >= 4) a.pga = 1;
+  if (idx >= 5) { a.g3p = 1; a.atp = 1; a.nadph = 1; }
+  if (idx >= 6 || state.done) a.regen = 1; // acknowledged during the "skip ahead" beat
+  return a;
+}
+
 /* -------- world rendering (idle scene) -------------------------------------- */
 
 function drawIdleWorld(ctx, W, H, state, particles, camX = 0, camY = 0) {
   ctx.save();
   ctx.translate(W / 2 - camX, H / 2 - camY);
 
+  const la = labelAlpha(state);
   drawStroma(ctx, 0, 0, { w: 460, h: 340, seed: 4 });
-  drawLeafEdge(ctx);
+  drawLeafEdge(ctx, la.outside, la.inside);
   drawStoma(ctx, STOMA.x, STOMA.y, { openness: 0.9, scale: 1.1 });
   drawWheelRing(ctx, state.idleTheta);
-  for (const key of Object.keys(NODES)) drawNode(ctx, NODES[key]);
-  drawRubisco(ctx, state);
-  drawCarrierSlot(ctx, ATP_SLOT,   'ATP',   COLORS.atp);
-  drawCarrierSlot(ctx, NADPH_SLOT, 'NADPH', COLORS.nadph);
+  for (const key of Object.keys(NODES)) drawNode(ctx, NODES[key], la[key] ?? DIM_LABEL);
+  drawRubisco(ctx, state, la.rubisco);
+  drawCarrierSlot(ctx, ATP_SLOT,   'ATP',   COLORS.atp,   la.atp);
+  drawCarrierSlot(ctx, NADPH_SLOT, 'NADPH', COLORS.nadph, la.nadph);
 
   // Glucose only appears once the atom is on the exit leg - the reveal is
   // part of the payoff.
@@ -242,7 +292,7 @@ function drawIdleWorld(ctx, W, H, state, particles, camX = 0, camY = 0) {
   ctx.restore();
 }
 
-function drawLeafEdge(ctx) {
+function drawLeafEdge(ctx, outsideAlpha = 1, insideAlpha = 1) {
   ctx.save();
   ctx.strokeStyle = withAlpha(COLORS.chloro, 0.55);
   ctx.lineWidth = 3;
@@ -250,10 +300,11 @@ function drawLeafEdge(ctx) {
   ctx.moveTo(-360, -170);
   ctx.quadraticCurveTo(-260, 0, -360, 170);
   ctx.stroke();
-  ctx.fillStyle = COLORS.textMuted;
   ctx.font = '12px system-ui, sans-serif';
   ctx.textAlign = 'left';
+  ctx.fillStyle = withAlpha(COLORS.textMuted, outsideAlpha);
   ctx.fillText('outside the leaf', -455, -140);
+  ctx.fillStyle = withAlpha(COLORS.textMuted, insideAlpha);
   ctx.fillText('inside (stroma)',  -170, -160);
   ctx.restore();
 }
@@ -273,7 +324,7 @@ function drawWheelRing(ctx, theta) {
   ctx.restore();
 }
 
-function drawNode(ctx, node) {
+function drawNode(ctx, node, textAlpha = 1) {
   ctx.save();
   ctx.fillStyle = node.color;
   ctx.globalAlpha = 0.22;
@@ -282,17 +333,17 @@ function drawNode(ctx, node) {
   ctx.strokeStyle = node.color;
   ctx.lineWidth = 1.6;
   ctx.stroke();
-  ctx.fillStyle = COLORS.textPrimary;
+  ctx.fillStyle = withAlpha(COLORS.textPrimary, textAlpha);
   ctx.font = 'bold 13px system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(node.label, node.x, node.y - 34);
   ctx.font = '11px system-ui, sans-serif';
-  ctx.fillStyle = COLORS.textSecondary;
+  ctx.fillStyle = withAlpha(COLORS.textSecondary, textAlpha);
   ctx.fillText(node.sub, node.x, node.y + 44);
   ctx.restore();
 }
 
-function drawRubisco(ctx, state) {
+function drawRubisco(ctx, state, textAlpha = 1) {
   const active = PHASES[state.phaseIdx]?.active === 'rubp' && (state.riding || state.done);
   const pulse = active ? 0.6 + 0.4 * Math.sin(state.idleTheta * 6) : 0.6;
   const path = blobPath(RUBISCO_POS.x, RUBISCO_POS.y, 26,
@@ -307,10 +358,10 @@ function drawRubisco(ctx, state) {
   ctx.lineWidth = 1.4;
   ctx.stroke(path);
   ctx.restore();
-  label(ctx, RUBISCO_POS.x, RUBISCO_POS.y - 42, 'rubisco', COLORS.rubisco);
+  label(ctx, RUBISCO_POS.x, RUBISCO_POS.y - 42, 'rubisco', COLORS.rubisco, textAlpha);
 }
 
-function drawCarrierSlot(ctx, slot, name, color) {
+function drawCarrierSlot(ctx, slot, name, color, textAlpha = 1) {
   ctx.save();
   ctx.strokeStyle = color;
   ctx.globalAlpha = 0.55;
@@ -320,7 +371,7 @@ function drawCarrierSlot(ctx, slot, name, color) {
   ctx.setLineDash([]);
   ctx.globalAlpha = 1;
   ctx.font = '11px system-ui, sans-serif';
-  ctx.fillStyle = color;
+  ctx.fillStyle = withAlpha(color, textAlpha);
   ctx.textAlign = 'center';
   ctx.fillText(name, slot.x, slot.y + 30);
   ctx.restore();
@@ -374,9 +425,9 @@ function drawPips(ctx, W, H, state) {
   ctx.restore();
 }
 
-function label(ctx, x, y, text, color) {
+function label(ctx, x, y, text, color, alpha = 1) {
   ctx.save();
-  ctx.fillStyle = color;
+  ctx.fillStyle = alpha < 1 ? withAlpha(color, alpha) : color;
   ctx.font = '12px system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(text, x, y);
