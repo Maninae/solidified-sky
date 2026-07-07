@@ -180,12 +180,19 @@ function mount(sectionEl) {
 
 /* -------- ride advancement -------------------------------------------------- */
 
+// Fraction of a phase after which the highlight ring moves to that phase's
+// destination landmark. Before it, the ring stays on the landmark the atom is
+// leaving, so the ring travels with the atom instead of jumping ahead the
+// instant a phase begins (which read as a "head here next" marker).
+const RING_SWITCH_T = 0.65;
+
 function advanceRide(state, paths, readout, dt) {
   const phase = PHASES[state.phaseIdx];
   state.phaseT = Math.min(1, state.phaseT + dt / phase.dur);
   const p = paths[state.phaseIdx](state.phaseT);
   state.atomWorld.x = p[0]; state.atomWorld.y = p[1];
-  state.activeFocus = phase.focus;
+  const prevFocus = state.phaseIdx > 0 ? PHASES[state.phaseIdx - 1].focus : phase.focus;
+  state.activeFocus = state.phaseT < RING_SWITCH_T ? prevFocus : phase.focus;
 
   // Trail crumbs - one every few px so the gold thread doesn't clot.
   const last = state.trail[state.trail.length - 1];
@@ -277,8 +284,9 @@ function nearestGrana(pos) {
 /* -------- ride overlays: active-landmark ring, gold trail, pip meter ------- */
 
 function drawActiveHighlight(ctx, state) {
-  const phase = PHASES[state.phaseIdx];
-  const spot = focusSpot(phase?.focus);
+  // Use the gated focus (set in advanceRide) so the ring travels with the atom
+  // rather than snapping to the phase's destination the instant it begins.
+  const spot = focusSpot(state.activeFocus);
   if (!spot) return;
   ctx.save();
   ctx.strokeStyle = COLORS.accent2;
